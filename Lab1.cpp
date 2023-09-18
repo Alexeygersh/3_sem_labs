@@ -1,29 +1,29 @@
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
-#include <string>
-#include <cstring>
+
 using namespace std;
 
 int main(void)
 {
+    struct truba
+    {
+        string name_t;
+        double len;
+        int d;
+        bool remont;
+    } t;
+
+    struct station
+    {
+        string name_s;
+        int kolvo_cex;
+        int kolvo_cex_rabot;
+        double k;
+    } s;
+
     while (1)
     {
-        struct truba
-        {
-            string name_t;
-            double len;
-            int d;
-            bool remont;
-        } t;
-
-        struct station
-        {
-            string name_s;
-            int kolvo_cex;
-            int kolvo_cex_rabot;
-            double k;
-        } s;
 
         cout << "============================================\n"
              << "__________________Menu______________________\n\n"
@@ -38,23 +38,22 @@ int main(void)
              << "0. Exit\n";
 
         short int p;
-        cin >> p;
-        bool c;
-
+        bool c = true;
         while (c)
         {
             if (cin >> p && p <= 7 && p >= 0)
             {
-                cout << "ok\n";
                 c = false;
+                cout << "Ok,\n";
             }
             else
             {
                 cin.clear();
                 cin.ignore(10000, '\n');
-                cout << "Error.Try again.\n";
+                cout << "Ahh! Here we go again...\n";
             }
         };
+
         switch (p)
         {
         case (1):
@@ -108,20 +107,115 @@ int main(void)
             break;
 
         case (4):
-            break;
+        {
+            p = 0;
+            cout << "Choose parameter which you want to edit\n"
+                 << "1. Name pipe\n"
+                 << "2. Length pipe\n"
+                 << "3. diameter pipe\n"
+                 << "4. mending(0/1)\n";
+            bool c = true;
+            while (c)
+            {
+                if (cin >> p && p <= 4 && p >= 1)
+                {
+                    c = false;
+                    cout << "Ok\n";
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Error.Try again.\n";
+                }
+            };
+            switch (p)
+            {
+            case (1):
+                cout << "Input name pipe\n"
+                     << "__> ";
+                cin >> t.name_t;
+                break;
 
+            case (2):
+                cout << "Input length pipe\n"
+                     << "__> ";
+                cin >> t.len;
+                break;
+
+            case (3):
+                cout << "Input diameter pipe\n"
+                     << "__> ";
+                cin >> t.d;
+                break;
+
+            case (4):
+                cout << "Input mending(1/0)\n"
+                     << "__> ";
+                cin >> t.remont;
+                break;
+            }
+            break;
+        }
         case (5):
-            break;
+        {
+            p = 0;
+            cout << "Choose parameter which you want to edit\n"
+                 << "1. Name KS\n"
+                 << "2. Number of workshops\n"
+                 << "3. Number of workshops in work\n"
+                 << "4. Ratio\n";
+            bool c = true;
+            while (c)
+            {
+                if (cin >> p && p <= 4 && p >= 1)
+                {
+                    c = false;
+                    cout << "Ok\n";
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Error.Try again.\n";
+                }
+            };
+            switch (p)
+            {
+            case (1):
+                cout << "Input Name KS\n"
+                     << "__> ";
+                cin >> s.name_s;
+                break;
 
+            case (2):
+                cout << "Input Number of workshops\n"
+                     << "__> ";
+                cin >> s.kolvo_cex;
+                break;
+
+            case (3):
+                cout << "Input Number of workshops in work\n"
+                     << "__> ";
+                cin >> s.kolvo_cex_rabot;
+                break;
+
+            case (4):
+                cout << "Ratio\n"
+                     << "__> ";
+                cin >> s.k;
+                break;
+            }
+            break;
+        }
         case (6):
         {
             ofstream out;
-            out.open("base.txt", ios::out);
+            out.open("base.txt");
+            string tr = t.name_t;
             if (out.is_open())
             {
-                const char *chr = t.name_t.c_str();
-
-                out << chr << endl
+                out << t.name_t << endl
                     << t.len << endl
                     << t.d << endl
                     << t.remont << endl
@@ -138,19 +232,24 @@ int main(void)
         case (7):
         {
             ifstream in;
-            in.open("base.txt", ios::in);
+            in.open("base.txt");
             /*cout << endl
                  << in.rdbuf();
             */
             if (in.is_open() && !in.eof())
             {
-                string temp[9];
-                for (int i = 0; i < 8; i++)
-                {
-                    getline(in, temp[i]);
-                }
+
+                in >> t.name_t;
+                in >> t.len;
+                in >> t.d;
+                in >> t.remont;
+                in >> s.name_s;
+                in >> s.kolvo_cex;
+                in >> s.kolvo_cex_rabot;
+                in >> s.k;
             }
             in.close();
+
             cout << "load successfully" << endl;
             break;
         }
