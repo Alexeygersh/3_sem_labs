@@ -57,6 +57,7 @@ int main(void)
         switch (p)
         {
         case (1):
+        {
             cout << "Input name pipe\n"
                  << "__> ";
             cin >> t.name_t;
@@ -74,8 +75,9 @@ int main(void)
             cin >> t.remont;
 
             break;
-
+        }
         case (2):
+        {
             cout << "Input name KS\n"
                  << "__> ";
             cin >> s.name_s;
@@ -88,13 +90,32 @@ int main(void)
                  << "__> ";
             cin >> s.kolvo_cex_rabot;
 
+            bool c = true;
+            while (c)
+            {
+                if (s.kolvo_cex > s.kolvo_cex_rabot)
+                {
+                    c = false;
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "\n!!! number of workshops in work must be smaller than all number of workshops\n\n";
+                    cout << "Input number of workshops in work\n"
+                         << "__> ";
+                    cin >> s.kolvo_cex_rabot;
+                }
+            };
+
             cout << "Input ratio\n"
                  << "__> ";
             cin >> s.k;
 
             break;
-
+        }
         case (3):
+        {
             cout << "Name pipe  " << t.name_t << "\n"
                  << "Length pipe  " << t.len << "\n"
                  << "Diameter pipe  " << t.d << "\n"
@@ -105,19 +126,17 @@ int main(void)
                  << "Number of workshops in work  " << s.kolvo_cex_rabot << "\n"
                  << "Ratio  " << s.k << "\n";
             break;
-
+        }
         case (4):
         {
             p = 0;
             cout << "Choose parameter which you want to edit\n"
                  << "1. Name pipe\n"
-                 << "2. Length pipe\n"
-                 << "3. diameter pipe\n"
-                 << "4. mending(0/1)\n";
+                 << "2. mending(0/1)\n";
             bool c = true;
             while (c)
             {
-                if (cin >> p && p <= 4 && p >= 1)
+                if (cin >> p && p <= 2 && p >= 1)
                 {
                     c = false;
                     cout << "Ok\n";
@@ -132,28 +151,19 @@ int main(void)
             switch (p)
             {
             case (1):
+            {
                 cout << "Input name pipe\n"
                      << "__> ";
                 cin >> t.name_t;
                 break;
-
+            }
             case (2):
-                cout << "Input length pipe\n"
-                     << "__> ";
-                cin >> t.len;
-                break;
-
-            case (3):
-                cout << "Input diameter pipe\n"
-                     << "__> ";
-                cin >> t.d;
-                break;
-
-            case (4):
+            {
                 cout << "Input mending(1/0)\n"
                      << "__> ";
                 cin >> t.remont;
                 break;
+            }
             }
             break;
         }
@@ -162,13 +172,12 @@ int main(void)
             p = 0;
             cout << "Choose parameter which you want to edit\n"
                  << "1. Name KS\n"
-                 << "2. Number of workshops\n"
-                 << "3. Number of workshops in work\n"
-                 << "4. Ratio\n";
+                 << "2. Number of workshops in work\n"
+                 << "3. Ratio\n";
             bool c = true;
             while (c)
             {
-                if (cin >> p && p <= 4 && p >= 1)
+                if (cin >> p && p <= 3 && p >= 1)
                 {
                     c = false;
                     cout << "Ok\n";
@@ -183,28 +192,43 @@ int main(void)
             switch (p)
             {
             case (1):
+            {
                 cout << "Input Name KS\n"
                      << "__> ";
                 cin >> s.name_s;
                 break;
-
+            }
             case (2):
-                cout << "Input Number of workshops\n"
-                     << "__> ";
-                cin >> s.kolvo_cex;
-                break;
-
-            case (3):
+            {
                 cout << "Input Number of workshops in work\n"
                      << "__> ";
                 cin >> s.kolvo_cex_rabot;
+                bool c = true;
+                while (c)
+                {
+                    if (s.kolvo_cex > s.kolvo_cex_rabot)
+                    {
+                        c = false;
+                    }
+                    else
+                    {
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                        cout << "\n!!! number of workshops in work must be smaller than all number of workshops\n\n";
+                        cout << "Input number of workshops in work\n"
+                             << "__> ";
+                        cin >> s.kolvo_cex_rabot;
+                    }
+                }
                 break;
-
-            case (4):
+            }
+            case (3):
+            {
                 cout << "Ratio\n"
                      << "__> ";
                 cin >> s.k;
                 break;
+            }
             }
             break;
         }
@@ -234,7 +258,7 @@ int main(void)
             ifstream in;
             in.open("base.txt");
             /*cout << endl
-                 << in.rdbuf();
+                << in.rdbuf();
             */
             if (in.is_open() && !in.eof())
             {
@@ -258,7 +282,7 @@ int main(void)
             break;
         default:
             cout << "Wrong action\n";
+            return 0;
         };
     }
-    return 0;
-}
+};
