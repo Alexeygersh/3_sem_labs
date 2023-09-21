@@ -1,7 +1,7 @@
 #include <iostream>
-#include <stdlib.h>
 #include <fstream>
-#include <string>
+#include <stdlib.h>
+
 using namespace std;
 
 int main(void)
@@ -22,6 +22,8 @@ int main(void)
         double k;
     } s;
 
+    system("CLS");
+
     t.name_t = "_";
     t.len = NULL;
     t.d = NULL;
@@ -30,6 +32,7 @@ int main(void)
     s.kolvo_cex = NULL;
     s.kolvo_cex_rabot = NULL;
     s.name_s = "_";
+
     while (1)
     {
 
@@ -45,7 +48,7 @@ int main(void)
              << "7. Load\n"
              << "0. Exit\n";
 
-        short int p;
+        short int p = 0;
         bool c = true;
         while (c)
         {
@@ -58,7 +61,7 @@ int main(void)
             {
                 cin.clear();
                 cin.ignore(10000, '\n');
-                cout << "Please input correct number\n";
+                cout << "\n-----------------------\nPlease input correct number\n-----------------------\n";
             }
         };
 
@@ -68,7 +71,8 @@ int main(void)
         {
             cout << "Input name pipe\n"
                  << "__> ";
-            getline(cin >> t.name_t, t.name_t);
+            cin.ignore(10000, '\n');
+            getline(cin, t.name_t);
 
             cout << "\nInput length pipe\n"
                  << "__> ";
@@ -82,13 +86,15 @@ int main(void)
                  << "__> ";
             cin >> t.remont;
 
+            system("CLS");
             break;
         }
         case (2):
         {
             cout << "Input name KS\n"
                  << "__> ";
-            getline(cin >> s.name_s, s.name_s);
+            cin.ignore(10000, '\n');
+            getline(cin, s.name_s);
 
             cout << "\nInput number of workshops\n"
                  << "__> ";
@@ -101,7 +107,7 @@ int main(void)
             bool c = true;
             while (c)
             {
-                if (s.kolvo_cex > s.kolvo_cex_rabot)
+                if (s.kolvo_cex >= s.kolvo_cex_rabot)
                 {
                     c = false;
                 }
@@ -120,10 +126,12 @@ int main(void)
                  << "__> ";
             cin >> s.k;
 
+            system("CLS");
             break;
         }
         case (3):
         {
+            system("CLS");
             if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &&
                 (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
             {
@@ -150,10 +158,10 @@ int main(void)
         }
         case (4):
         {
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &
-                (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
+            system("CLS");
+            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL))
             {
-                cout << "input statements doesnt exist\n";
+                cout << "\n-------------------------------------\n!!! input statements doesnt exist !!!\n-------------------------------------\n";
             }
             else
             {
@@ -182,7 +190,8 @@ int main(void)
                 {
                     cout << "Input name pipe\n"
                          << "__> ";
-                    cin >> t.name_t;
+                    cin.ignore(10000, '\n');
+                    getline(cin, s.name_s);
                     break;
                 }
                 case (2):
@@ -198,10 +207,10 @@ int main(void)
         }
         case (5):
         {
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &
-                (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
+            system("CLS");
+            if ((s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
             {
-                cout << "input statements doesnt exist\n";
+                cout << "\n-------------------------------------\n!!! input statements doesnt exist !!!\n-------------------------------------\n";
             }
             else
             {
@@ -231,7 +240,8 @@ int main(void)
                 {
                     cout << "Input Name KS\n"
                          << "__> ";
-                    cin >> s.name_s;
+                    cin.ignore(10000, '\n');
+                    getline(cin, s.name_s);
                     break;
                 }
                 case (2):
@@ -266,14 +276,16 @@ int main(void)
                     break;
                 }
                 }
-                break;
             }
+
+            break;
+        }
         case (6):
         {
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &
-                (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
+            system("CLS");
+            if (t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL)
             {
-                cout << "input statements doesnt exist\n";
+                cout << "\n-------------------------------------\n!!! input pipe statements doesnt exist !!!\n-------------------------------------\n";
             }
             else
             {
@@ -292,18 +304,41 @@ int main(void)
                         << s.k;
                 }
                 out.close();
-                cout << "saved successfully" << endl;
+                cout << "pipe statements saved successfully" << endl;
+            }
+
+            if (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_")
+            {
+                cout << "\n-------------------------------------\n!!! input station statements doesnt exist !!!\n-------------------------------------\n";
+            }
+            else
+            {
+                ofstream out;
+                out.open("base.txt");
+                string tr = t.name_t;
+                if (out.is_open())
+                {
+                    out << t.name_t << endl
+                        << t.len << endl
+                        << t.d << endl
+                        << t.remont << endl
+                        << s.name_s << endl
+                        << s.kolvo_cex << endl
+                        << s.kolvo_cex_rabot << endl
+                        << s.k;
+                }
+                out.close();
+                cout << "station statements saved successfully" << endl;
             }
         }
         break;
-        }
-
         case (7):
         {
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &
+            system("CLS");
+            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &&
                 (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
             {
-                cout << "input statements doesnt exist\n";
+                cout << "\n-------------------------------------\n!!! input statements doesnt exist !!!\n-------------------------------------\n";
             }
             else
             {
