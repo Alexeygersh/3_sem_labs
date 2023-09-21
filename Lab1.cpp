@@ -58,7 +58,7 @@ int main(void)
             {
                 cin.clear();
                 cin.ignore(10000, '\n');
-                cout << "Please input correct number (0-7)\n";
+                cout << "Please input correct number\n";
             }
         };
 
