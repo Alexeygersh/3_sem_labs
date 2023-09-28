@@ -27,7 +27,7 @@ int main(void)
     t.name_t = "_";
     t.len = NULL;
     t.d = NULL;
-    t.remont = NULL;
+    t.remont = 1;
     s.k = NULL;
     s.kolvo_cex = NULL;
     s.kolvo_cex_rabot = NULL;
@@ -77,10 +77,44 @@ int main(void)
             cout << "\nInput length pipe\n"
                  << "__> ";
             cin >> t.len;
+            c = true;
+            while (c)
+            {
+                if (t.len != NULL)
+                {
+                    c = false;
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "\nWrong length!!!\n";
+                    cout << "\nInput length pipe\n"
+                         << "__> ";
+                    cin >> t.len;
+                }
+            };
 
             cout << "Input diameter pipe\n"
                  << "__> ";
             cin >> t.d;
+            c = true;
+            while (c)
+            {
+                if (t.d != NULL)
+                {
+                    c = false;
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "\nWrong diameter!!!\n";
+                    cout << "\nInput diameter pipe\n"
+                         << "__> ";
+                    cin >> t.d;
+                }
+            };
 
             cout << "Input mending(1/0)\n"
                  << "__> ";
@@ -99,12 +133,29 @@ int main(void)
             cout << "\nInput number of workshops\n"
                  << "__> ";
             cin >> s.kolvo_cex;
+            bool c = true;
+            while (c)
+            {
+                if (s.kolvo_cex != NULL)
+                {
+                    c = false;
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "\nWrong number of workshops!!!\n";
+                    cout << "\nInput number of workshops\n"
+                         << "__> ";
+                    cin >> s.kolvo_cex;
+                }
+            };
 
             cout << "Input number of workshops in work\n"
                  << "__> ";
             cin >> s.kolvo_cex_rabot;
 
-            bool c = true;
+            c = true;
             while (c)
             {
                 if (s.kolvo_cex >= s.kolvo_cex_rabot)
@@ -125,6 +176,23 @@ int main(void)
             cout << "Input ratio\n"
                  << "__> ";
             cin >> s.k;
+            c = true;
+            while (c)
+            {
+                if (s.k != NULL)
+                {
+                    c = false;
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "\nWrong ratio!!!\n";
+                    cout << "Input ratio\n"
+                         << "__> ";
+                    cin >> s.k;
+                }
+            };
 
             system("CLS");
             break;
@@ -132,14 +200,14 @@ int main(void)
         case (3):
         {
             system("CLS");
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &&
+            if ((t.name_t == "_" || t.d == NULL || t.len == NULL) &&
                 (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
             {
                 cout << "input statements doesnt exist\n";
             }
             else
             {
-                if (t.name_t != "_" && t.d != NULL && t.len != NULL && t.remont != NULL)
+                if (t.name_t != "_" && t.d != NULL && t.len != NULL)
                 {
                     cout << "Name pipe  " << t.name_t << "\n"
                          << "Length pipe  " << t.len << "\n"
@@ -159,7 +227,7 @@ int main(void)
         case (4):
         {
             system("CLS");
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL))
+            if ((t.name_t == "_" || t.d == NULL || t.len == NULL))
             {
                 cout << "\n-------------------------------------\n!!! input statements doesnt exist !!!\n-------------------------------------\n";
             }
@@ -273,6 +341,13 @@ int main(void)
                     cout << "Ratio\n"
                          << "__> ";
                     cin >> s.k;
+                    while (s.k == NULL)
+                    {
+                        cout << "\nWrong ratio!!!\n";
+                        cout << "Input ratio\n"
+                             << "__> ";
+                        cin >> s.k;
+                    }
                     break;
                 }
                 }
@@ -283,7 +358,7 @@ int main(void)
         case (6):
         {
             system("CLS");
-            if (t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL)
+            if (t.name_t == "_" || t.d == NULL || t.len == NULL)
             {
                 cout << "\n-------------------------------------\n!!! input pipe statements doesnt exist !!!\n-------------------------------------\n";
             }
@@ -307,7 +382,7 @@ int main(void)
                 cout << "pipe statements saved successfully" << endl;
             }
 
-            if (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_")
+            if (s.kolvo_cex == NULL || s.name_s == "_")
             {
                 cout << "\n-------------------------------------\n!!! input station statements doesnt exist !!!\n-------------------------------------\n";
             }
@@ -335,32 +410,32 @@ int main(void)
         case (7):
         {
             system("CLS");
-            if ((t.name_t == "_" || t.d == NULL || t.len == NULL || t.remont == NULL) &&
-                (s.k == NULL || s.kolvo_cex == NULL || s.kolvo_cex_rabot == NULL || s.name_s == "_"))
+            ifstream in;
+            in.open("base.txt");
+            /*cout << endl
+                << in.rdbuf();
+            */
+            if (in.is_open() && !in.eof())
+            {
+
+                in >> t.name_t;
+                in >> t.len;
+                in >> t.d;
+                in >> t.remont;
+                in >> s.name_s;
+                in >> s.kolvo_cex;
+                in >> s.kolvo_cex_rabot;
+                in >> s.k;
+            }
+            in.close();
+
+            if ((t.name_t == "_" || t.d == NULL || t.len == NULL) ||
+                (s.kolvo_cex == NULL || s.name_s == "_"))
             {
                 cout << "\n-------------------------------------\n!!! input statements doesnt exist !!!\n-------------------------------------\n";
             }
             else
             {
-                ifstream in;
-                in.open("base.txt");
-                /*cout << endl
-                    << in.rdbuf();
-                */
-                if (in.is_open() && !in.eof())
-                {
-
-                    in >> t.name_t;
-                    in >> t.len;
-                    in >> t.d;
-                    in >> t.remont;
-                    in >> s.name_s;
-                    in >> s.kolvo_cex;
-                    in >> s.kolvo_cex_rabot;
-                    in >> s.k;
-                }
-                in.close();
-
                 cout << "load successfully" << endl;
             }
             break;
