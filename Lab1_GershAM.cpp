@@ -118,8 +118,50 @@ int redact_station_err(int per)
 
 void fout(truba &t, station &s)
 {
+
+    /*string mas[8];
+    if (t.name_t == "_")
+    {
+        mas[4] = s.name_s;
+        mas[5] = s.kolvo_cex;
+        mas[6] = s.kolvo_cex_rabot;
+        mas[7] = s.k;
+    }
+    else if (s.name_s == "_")
+    {
+        mas[0] = t.name_t;
+        mas[1] = t.len;
+        mas[2] = t.d;
+        mas[3] = t.remont;
+    }
+    else if (t.name_t != "_" && s.name_s != "_")
+    {
+        mas[0] = t.name_t;
+        mas[1] = t.len;
+        mas[2] = t.d;
+        mas[3] = t.remont;
+        mas[4] = s.name_s;
+        mas[5] = s.kolvo_cex;
+        mas[6] = s.kolvo_cex_rabot;
+        mas[7] = s.k;
+    }
+
     ofstream out;
-    out.open("base.txt" /* ios::ate | ios::out | ios::app*/);
+    out.open("base.txt");
+    if (out.is_open())
+    {
+        out << mas[0] << endl
+            << mas[1] << endl
+            << mas[2] << endl
+            << mas[3] << endl
+            << mas[4] << endl
+            << mas[5] << endl
+            << mas[6] << endl
+            << mas[7];
+    }
+    */
+    ofstream out;
+    out.open("base.txt");
     if (out.is_open())
     {
         out << t.name_t << endl
@@ -294,7 +336,7 @@ void redact_pipe(truba &t)
     }
 }
 
-void redact_station(station s)
+void redact_station(station &s)
 {
     int p = 0;
 
