@@ -21,7 +21,7 @@ struct station
 };
 
 void InputPipe(truba &);
-void InputStation(station &);
+void InputKS(station &);
 
 void menu()
 {
@@ -143,7 +143,7 @@ void fout(truba &t, station &s)
     }
 }
 
-void fin(truba &tr, station &st)
+void fin(truba &t, station &s)
 {
     ifstream in;
     in.open("base.txt");
@@ -152,28 +152,24 @@ void fin(truba &tr, station &st)
     */
     if (in.is_open() && !in.eof())
     {
-        in >> tr.name_t;
-        in >> tr.len;
-        in >> tr.d;
-        in >> tr.remont;
-        in >> st.name_s;
-        in >> st.kolvo_cex;
-        in >> st.kolvo_cex_rabot;
-        in >> st.k;
+        in >> t.name_t;
+        in >> t.len;
+        in >> t.d;
+        in >> t.remont;
+        in >> s.name_s;
+        in >> s.kolvo_cex;
+        in >> s.kolvo_cex_rabot;
+        in >> s.k;
     }
     in.close();
 
-    if (tr.name_t == "" || tr.d == 0 || tr.len == 0)
+    if (t.name_t == "" || t.d == 0 || t.len == 0)
     {
         cout << "\ninput pipe statements doesnt exist !!!\n";
     }
-    else if (st.kolvo_cex == 0 || st.name_s == "")
+    if (s.kolvo_cex == 0 || s.name_s == "")
     {
         cout << "\ninput station statements doesnt exist !!!\n";
-    }
-    else
-    {
-        cout << "\nload successfully\n";
     }
 }
 
@@ -224,48 +220,47 @@ void InputKS(station &s)
     err0(s.k);
 };
 //-------------------------------------------------------
-void OutputPipe(truba &tr)
+void OutputPipe(truba &t)
 {
-    cout << "Name pipe:  " << tr.name_t << "\n"
-         << "Length pipe:  " << tr.len << "\n"
-         << "Diameter pipe:  " << tr.d << "\n"
-         << "Mending:  " << tr.remont << "\n";
-};
-void OutputKS(station &st)
+    cout << "Name pipe:  " << t.name_t << "\n"
+         << "Length pipe:  " << t.len << "\n"
+         << "Diameter pipe:  " << t.d << "\n"
+         << "Mending:  " << t.remont << "\n";
+}
+void OutputKS(station &s)
 {
-    station s;
-    cout << "Name KS:  " << st.name_s << "\n"
-         << "Number of workshops:  " << st.kolvo_cex << "\n"
-         << "Number of workshops in work:  " << st.kolvo_cex_rabot << "\n"
-         << "Ratio:  " << st.k << "\n";
-};
+    cout << "Name KS:  " << s.name_s << "\n"
+         << "Number of workshops:  " << s.kolvo_cex << "\n"
+         << "Number of workshops in work:  " << s.kolvo_cex_rabot << "\n"
+         << "Ratio:  " << s.k << "\n";
+}
 
-void output(truba tr, station st)
+void output(truba &t, station &s)
 {
-    if (tr.name_t == "" && tr.d == 0 && tr.len == 0)
+    if (t.name_t == "_" && t.d == 0 && t.len == 0)
     {
         cout << "input pipe statements doesnt exist\n";
     }
-    if (st.kolvo_cex == 0 && st.name_s == "")
+    if (s.kolvo_cex == 0 && s.name_s == "_")
     {
         cout << "input station statements doesnt exist\n";
     }
-    if (tr.name_t != "" && tr.d != 0 && tr.len != 0)
+    if (t.name_t != "_" && t.d != 0 && t.len != 0)
     {
-        OutputPipe(tr);
+        OutputPipe(t);
     }
-    if (st.kolvo_cex != 0 && st.name_s != "")
+    if (s.kolvo_cex != 0 && s.name_s != "_")
     {
-        OutputKS(st);
+        OutputKS(s);
     }
 }
 //============================================  edits   ==============================================
 
-void redact_pipe(truba &tr)
+void redact_pipe(truba &t)
 {
     int p = 0;
 
-    if ((tr.name_t == "" && tr.d == 0 && tr.len == 0))
+    if ((t.name_t == "_" && t.d == 0 && t.len == 0))
     {
         cout << "\n input statements doesnt exist !!!\n";
     }
@@ -284,26 +279,26 @@ void redact_pipe(truba &tr)
             cout << "Input name pipe\n"
                  << "__> ";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            getline(cin, tr.name_t);
+            getline(cin, t.name_t);
             break;
         }
         case (2):
         {
             cout << "Input mending(1/0)\n"
                  << "__> ";
-            cin >> tr.remont;
-            err(tr.remont);
+            cin >> t.remont;
+            err(t.remont);
             break;
         }
         }
     }
-};
+}
 
-void redact_station(struct station st)
+void redact_station(station s)
 {
     int p = 0;
 
-    if ((st.k == 0 || st.kolvo_cex == 0 || st.name_s == ""))
+    if ((s.k == 0 || s.kolvo_cex == 0 || s.name_s == "_"))
     {
         cout << "\n input statements doesnt exist \n";
     }
@@ -322,7 +317,7 @@ void redact_station(struct station st)
             cout << "Input Name KS\n"
                  << "__> ";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            getline(cin, st.name_s);
+            getline(cin, s.name_s);
             break;
         }
         case (2):
@@ -330,8 +325,8 @@ void redact_station(struct station st)
 
             cout << "Input Number of workshops in work\n"
                  << "__> ";
-            cin >> st.kolvo_cex_rabot;
-            err_rabot(st.kolvo_cex_rabot, st.kolvo_cex);
+            cin >> s.kolvo_cex_rabot;
+            err_rabot(s.kolvo_cex_rabot, s.kolvo_cex);
 
             break;
         }
@@ -339,13 +334,13 @@ void redact_station(struct station st)
         {
             cout << "Ratio\n"
                  << "__> ";
-            cin >> st.k;
-            while (st.k == 0)
+            cin >> s.k;
+            while (s.k == 0)
             {
                 cout << "\nWrong ratio!!!\n";
                 cout << "Input ratio\n"
                      << "__> ";
-                cin >> st.k;
+                cin >> s.k;
             }
             break;
         }
@@ -358,6 +353,8 @@ int main()
 {
     truba t = {};
     station s = {};
+    t.name_t = "_";
+    s.name_s = "_";
 
     while (1)
     {
