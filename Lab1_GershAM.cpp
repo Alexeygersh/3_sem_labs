@@ -76,28 +76,28 @@ void CheckInputInt(bool p)
     }
 };
 
-void CheckInput_rabot(station &s)
+void CheckInput_workingcex(station &s)
 {
-    while ((!(cin) || (cin.peek() != '\n')) || (s.cex < s.workingcex))
+    while ((!(cin) || (cin.peek() != '\n')) || (s.workingcex > s.cex))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "incorrect data" << endl
+        cout << "incorrect data, input int<=" << s.cex << endl
              << "__> ";
         cin >> s.workingcex;
     }
 };
 
 //================================================== input/output file ===============================================
-void fout(truba &t,station &s)
+void fout(truba &t, station &s)
 {
+    ofstream out("base.txt");
     if (t.name_t == "_" || t.d == 0 || t.len == 0)
     {
         cout << "\nno pipe\n";
     }
     else
     {
-        ofstream out("base.txt");
         if (out.is_open())
         {
             out << "t" << endl
@@ -105,19 +105,15 @@ void fout(truba &t,station &s)
                 << t.len << endl
                 << t.d << endl
                 << t.remont << endl;
-
-            out.close();
             cout << "\npipe saved successfully\n";
         }
     }
-
     if (s.name_s == "_" || s.cex == 0)
     {
         cout << "\nno station\n";
     }
     else
     {
-        ofstream out("base.txt");
         if (out.is_open())
         {
             out << "s" << endl
@@ -125,10 +121,10 @@ void fout(truba &t,station &s)
                 << s.cex << endl
                 << s.workingcex << endl
                 << s.k << endl;
-            out.close();
             cout << "\nstation saved successfully\n";
         }
     }
+    out.close();
 };
 
 //----------------------------------------------------------
@@ -215,7 +211,7 @@ void InputKS(station &s)
     cout << "Input number of workshops in work\n"
          << "__> ";
     cin >> s.workingcex;
-    CheckInput_rabot(s);
+    CheckInput_workingcex(s);
 
     cout << "Input ratio\n"
          << "__> ";
@@ -279,7 +275,7 @@ void EditKS(station &s)
         cout << "Input number of workshops in work\n"
              << "__> ";
         cin >> s.workingcex;
-        CheckInputInt_NotNULL(s.workingcex);
+        CheckInput_workingcex(s);
     }
 };
 
