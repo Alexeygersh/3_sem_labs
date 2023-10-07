@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <limits>
+#include <iomanip>
 using namespace std;
 
 struct truba
@@ -11,12 +12,11 @@ struct truba
     int d;
     bool remont;
 };
-
 struct station
 {
     string name_s;
-    int kolvo_cex;
-    int kolvo_cex_rabot;
+    int cex;
+    int workingcex;
     double k;
 };
 
@@ -37,35 +37,34 @@ void menu()
          << "7. Load\n"
          << "0. Exit\n";
 };
-//============================================  errors  ====================================================
-int err07(int per)
+
+int InputInt_07()
 {
-    while ((per > 7) || (per < 0) || !(cin) || (cin.peek() != '\n'))
+    int p = 0;
+    while (!(cin >> p) || (cin.peek() != '\n') || (p > 7) || (p < 0))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> per;
     }
-    return per;
+    return p;
 };
 
 template <typename T>
-void err0(T per)
+void CheckInputInt_NotNULL(T p)
 {
-    while ((per == 0) || !(cin) || (cin.peek() != '\n'))
+    while (!(cin) || (cin.peek() != '\n') || (p == 0))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> per;
+        cin >> p;
     }
 };
 
-template <typename T>
-void err(T per)
+void CheckInputInt(bool p)
 {
     while (!(cin) || (cin.peek() != '\n'))
     {
@@ -73,146 +72,109 @@ void err(T per)
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> per;
+        cin >> p;
     }
 };
 
-void err_rabot(int cexrab, int cex)
+void CheckInput_rabot(station &s)
 {
-    while ((!(cin) || (cin.peek() != '\n')) || (cex < cexrab))
+    while ((!(cin) || (cin.peek() != '\n')) || (s.cex < s.workingcex))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> cexrab;
+        cin >> s.workingcex;
     }
 };
 
-int redact_pipe_err(int per)
-{
-    while (!(cin) || (cin.peek() != '\n') || (per > 2 || per < 1))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "incorrect data" << endl
-             << "__> ";
-        cin >> per;
-    }
-    return per;
-};
-
-int redact_station_err(int per)
-{
-    while (!(cin) || (cin.peek() != '\n') || (per > 3 && per < 1))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "incorrect data" << endl
-             << "__> ";
-        cin >> per;
-    }
-    return per;
-};
 //================================================== input/output file ===============================================
-
-void fout(truba &t, station &s)
+void fout(truba &t,station &s)
 {
+    if (t.name_t == "_" || t.d == 0 || t.len == 0)
+    {
+        cout << "\nno pipe\n";
+    }
+    else
+    {
+        ofstream out("base.txt");
+        if (out.is_open())
+        {
+            out << "t" << endl
+                << t.name_t << endl
+                << t.len << endl
+                << t.d << endl
+                << t.remont << endl;
 
-    /*string mas[8];
-    if (t.name_t == "_")
-    {
-        mas[4] = s.name_s;
-        mas[5] = s.kolvo_cex;
-        mas[6] = s.kolvo_cex_rabot;
-        mas[7] = s.k;
-    }
-    else if (s.name_s == "_")
-    {
-        mas[0] = t.name_t;
-        mas[1] = t.len;
-        mas[2] = t.d;
-        mas[3] = t.remont;
-    }
-    else if (t.name_t != "_" && s.name_s != "_")
-    {
-        mas[0] = t.name_t;
-        mas[1] = t.len;
-        mas[2] = t.d;
-        mas[3] = t.remont;
-        mas[4] = s.name_s;
-        mas[5] = s.kolvo_cex;
-        mas[6] = s.kolvo_cex_rabot;
-        mas[7] = s.k;
+            out.close();
+            cout << "\npipe saved successfully\n";
+        }
     }
 
-    ofstream out;
-    out.open("base.txt");
-    if (out.is_open())
+    if (s.name_s == "_" || s.cex == 0)
     {
-        out << mas[0] << endl
-            << mas[1] << endl
-            << mas[2] << endl
-            << mas[3] << endl
-            << mas[4] << endl
-            << mas[5] << endl
-            << mas[6] << endl
-            << mas[7];
+        cout << "\nno station\n";
     }
-    */
-    ofstream out;
-    out.open("base.txt");
-    if (out.is_open())
+    else
     {
-        out << t.name_t << endl
-            << t.len << endl
-            << t.d << endl
-            << t.remont << endl
-            << s.name_s << endl
-            << s.kolvo_cex << endl
-            << s.kolvo_cex_rabot << endl
-            << s.k;
+        ofstream out("base.txt");
+        if (out.is_open())
+        {
+            out << "s" << endl
+                << s.name_s << endl
+                << s.cex << endl
+                << s.workingcex << endl
+                << s.k << endl;
+            out.close();
+            cout << "\nstation saved successfully\n";
+        }
     }
+};
 
-    out.close();
-    if (t.name_t == "" || t.d == 0 || t.len == 0)
-    {
-        cout << "\ninput pipe statements doesnt exist !!!\n";
-    }
-    if (s.kolvo_cex == 0 || s.name_s == "")
-    {
-        cout << "\ninput station statements doesnt exist !!!\n";
-    }
-}
+//----------------------------------------------------------
 
 void fin(truba &t, station &s)
 {
-    ifstream in;
-    in.open("base.txt");
-    /*cout << endl
-        << in.rdbuf();
-    */
-    if (in.is_open() && !in.eof())
+    string id;
+    ifstream in("base.txt");
+    if (in.is_open())
     {
-        in >> t.name_t;
-        in >> t.len;
-        in >> t.d;
-        in >> t.remont;
-        in >> s.name_s;
-        in >> s.kolvo_cex;
-        in >> s.kolvo_cex_rabot;
-        in >> s.k;
+        in >> id;
+        if (id == "")
+        {
+            cout << "\nno data\n";
+        }
+        else if (id == "t")
+        {
+            // getline(str, sizeof(str))
+            /*getline(file,p.name);
+
+            getline(file, line);
+            p.length = stod(line);
+
+            getline(file, line);
+            p.diameter = stod(line);
+
+            getline(file, line);
+            p.inRepair = stoi(line);
+
+            getline(file,line);*/
+            in >> t.name_t >> t.len >> t.d >> t.remont;
+            cout << "\npipe loaded successfully\n";
+            in >> id;
+            if (id == "s")
+            {
+                in >> s.name_s >> s.cex >> s.workingcex >> s.k;
+                cout << "\nstation loaded successfully\n";
+            }
+        }
+        else if (id == "s")
+        {
+            in >> s.name_s >> s.cex >> s.workingcex >> s.k;
+            cout << "\nstation loaded successfully\n";
+        }
     }
     in.close();
-
-    if (t.name_t == "" || t.d == 0 || t.len == 0)
-    {
-        cout << "\ninput pipe statements doesnt exist !!!\n";
-    }
-    if (s.kolvo_cex == 0 || s.name_s == "")
-    {
-        cout << "\ninput station statements doesnt exist !!!\n";
-    }
 }
 
 //================================================== input/output ===============================================
@@ -226,19 +188,18 @@ void InputPipe(truba &t)
     cout << "\nInput length pipe\n"
          << "__> ";
     cin >> t.len;
-    err0(t.len);
+    CheckInputInt_NotNULL(t.len);
 
     cout << "Input diameter pipe\n"
          << "__> ";
     cin >> t.d;
-    err0(t.d);
+    CheckInputInt_NotNULL(t.d);
 
     cout << "Input mending(1/0)\n"
          << "__> ";
     cin >> t.remont;
-    err(t.remont);
+    CheckInputInt(t.remont);
 }
-
 void InputKS(station &s)
 {
     cout << "Input name KS\n"
@@ -248,145 +209,77 @@ void InputKS(station &s)
 
     cout << "\nInput number of workshops\n"
          << "__> ";
-    cin >> s.kolvo_cex;
-    err0(s.kolvo_cex);
+    cin >> s.cex;
+    CheckInputInt_NotNULL(s.cex);
 
     cout << "Input number of workshops in work\n"
          << "__> ";
-    cin >> s.kolvo_cex_rabot;
-    err_rabot(s.kolvo_cex_rabot, s.kolvo_cex);
+    cin >> s.workingcex;
+    CheckInput_rabot(s);
 
     cout << "Input ratio\n"
          << "__> ";
     cin >> s.k;
-    err0(s.k);
+    CheckInputInt_NotNULL(s.k);
 };
 //-------------------------------------------------------
 void OutputPipe(truba &t)
 {
-    cout << "Name pipe:  " << t.name_t << "\n"
-         << "Length pipe:  " << t.len << "\n"
-         << "Diameter pipe:  " << t.d << "\n"
-         << "Mending:  " << t.remont << "\n";
-}
+    if (t.name_t == "_" || t.d == 0 || t.len == 0)
+    {
+        cout << "Pipe statements doesnt exist\n";
+    }
+    else
+    {
+        cout << "Name pipe:  " << t.name_t << "\n"
+             << "Length pipe:  " << t.len << "\n"
+             << "Diameter pipe:  " << t.d << "\n"
+             << "Mending:  " << t.remont << "\n";
+    }
+};
 void OutputKS(station &s)
 {
-    cout << "Name KS:  " << s.name_s << "\n"
-         << "Number of workshops:  " << s.kolvo_cex << "\n"
-         << "Number of workshops in work:  " << s.kolvo_cex_rabot << "\n"
-         << "Ratio:  " << s.k << "\n";
-}
+    if (s.cex == 0 || s.name_s == "_")
+    {
+        cout << "Station statements doesnt exist\n";
+    }
+    else
+    {
+        cout << "Name KS:  " << s.name_s << "\n"
+             << "Number of workshops:  " << s.cex << "\n"
+             << "Number of workshops in work:  " << s.workingcex << "\n"
+             << "Ratio:  " << s.k << "\n";
+    }
+};
 
-void output(truba &t, station &s)
+//============================================  edits  ==============================================
+
+void EditPipe(truba &t)
 {
-    if (t.name_t == "_" && t.d == 0 && t.len == 0)
-    {
-        cout << "input pipe statements doesnt exist\n";
-    }
-    if (s.kolvo_cex == 0 && s.name_s == "_")
-    {
-        cout << "input station statements doesnt exist\n";
-    }
-    if (t.name_t != "_" && t.d != 0 && t.len != 0)
-    {
-        OutputPipe(t);
-    }
-    if (s.kolvo_cex != 0 && s.name_s != "_")
-    {
-        OutputKS(s);
-    }
-}
-//============================================  edits   ==============================================
-
-void redact_pipe(truba &t)
-{
-    int p = 0;
-
-    if ((t.name_t == "_" && t.d == 0 && t.len == 0))
+    if (t.name_t == "_" || t.d == 0 || t.len == 0)
     {
         cout << "\n input statements doesnt exist !!!\n";
     }
     else
     {
-
-        cout << "Choose parameter which you want to edit\n"
-             << "1. Name pipe\n"
-             << "2. mending(0/1)\n"
+        cout << "Input mending(0/1)\n"
              << "__> ";
-        cin >> p;
-        switch (redact_pipe_err(p))
-        {
-        case (1):
-        {
-            cout << "Input name pipe\n"
-                 << "__> ";
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            getline(cin, t.name_t);
-            break;
-        }
-        case (2):
-        {
-            cout << "Input mending(1/0)\n"
-                 << "__> ";
-            cin >> t.remont;
-            err(t.remont);
-            break;
-        }
-        }
+        cin >> t.remont;
+        CheckInputInt(t.remont);
     }
-}
-
-void redact_station(station &s)
+};
+void EditKS(station &s)
 {
-    int p = 0;
-
-    if ((s.k == 0 || s.kolvo_cex == 0 || s.name_s == "_"))
+    if (s.k == 0 || s.cex == 0 || s.name_s == "_")
     {
         cout << "\n input statements doesnt exist \n";
     }
     else
     {
-        cout << "Choose parameter which you want to edit\n"
-             << "1. Name KS\n"
-             << "2. Number of workshops in work\n"
-             << "3. Ratio\n"
+        cout << "Input number of workshops in work\n"
              << "__> ";
-        cin >> p;
-        switch (redact_station_err(p))
-        {
-        case (1):
-        {
-            cout << "Input Name KS\n"
-                 << "__> ";
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            getline(cin, s.name_s);
-            break;
-        }
-        case (2):
-        {
-
-            cout << "Input Number of workshops in work\n"
-                 << "__> ";
-            cin >> s.kolvo_cex_rabot;
-            err_rabot(s.kolvo_cex_rabot, s.kolvo_cex);
-
-            break;
-        }
-        case (3):
-        {
-            cout << "Ratio\n"
-                 << "__> ";
-            cin >> s.k;
-            while (s.k == 0)
-            {
-                cout << "\nWrong ratio!!!\n";
-                cout << "Input ratio\n"
-                     << "__> ";
-                cin >> s.k;
-            }
-            break;
-        }
-        }
+        cin >> s.workingcex;
+        CheckInputInt_NotNULL(s.workingcex);
     }
 };
 
@@ -401,10 +294,7 @@ int main()
     while (1)
     {
         menu();
-        int p = 0;
-        cin >> p;
-
-        switch (err07(p))
+        switch (InputInt_07())
         {
         case (1):
         {
@@ -421,19 +311,20 @@ int main()
         case (3):
         {
             system("CLS");
-            output(t, s);
+            OutputPipe(t);
+            OutputKS(s);
             break;
         }
         case (4):
         {
             system("CLS");
-            redact_pipe(t);
+            EditPipe(t);
             break;
         }
         case (5):
         {
             system("CLS");
-            redact_station(s);
+            EditKS(s);
             break;
         }
         case (6):
