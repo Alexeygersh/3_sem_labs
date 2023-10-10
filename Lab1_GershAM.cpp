@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <limits>
 #include <iomanip>
+#include <vector>
 using namespace std;
 
 struct truba
@@ -11,6 +12,9 @@ struct truba
     double len;
     int d;
     bool remont;
+
+    friend ostream &operator<<(ostream &out, truba &t);
+    friend istream &operator>>(istream &in, truba &t);
 };
 struct station
 {
@@ -18,6 +22,9 @@ struct station
     int cex;
     int workingcex;
     double k;
+
+    friend ostream &operator<<(ostream &out, station &s);
+    friend istream &operator>>(istream &in, station &s);
 };
 
 void InputPipe(truba &);
@@ -89,7 +96,109 @@ void CheckInput_workingcex(station &s)
 };
 
 //================================================== input/output file ===============================================
-void fout(truba &t, station &s)
+
+ostream &operator<<(ofstream &out, truba &t)
+{
+
+    out << "t" << endl
+        << t.name_t << endl
+        << t.len << endl
+        << t.d << endl
+        << t.remont << endl;
+
+    return out;
+}
+
+/*void foutPipes(const vector<truba> &ts)
+{
+    ofstream out("base.txt");
+    for (const auto &t : ts)
+    {
+        foutPipe(out, t);
+    }
+    out.close();
+}
+*/
+ostream &operator<<(ofstream &out, station &s)
+{
+    out << "s" << endl
+        << s.name_s << endl
+        << s.cex << endl
+        << s.workingcex << endl
+        << s.k << endl;
+
+    return out;
+};
+
+//----------------------
+
+istream &operator>>(istream &in, truba &t)
+{
+    string line;
+    if (getline(in, line))
+    {
+        istringstream iss(line);
+        string numStr;
+        string id;
+
+        getline(iss, id);
+
+        getline(iss, t.name_t);
+
+        getline(iss, numStr);
+        t.len = stod(numStr);
+
+        getline(iss, numStr);
+        t.d = stoi(numStr);
+
+        getline(iss, numStr);
+        t.remont = stoi(numStr);
+    }
+    return in;
+}
+
+istream &operator>>(istream &in, station &s)
+{
+    string line;
+    if (getline(in, line))
+    {
+        istringstream iss(line);
+        string numStr;
+        string id;
+
+        getline(iss, id);
+
+        getline(iss, s.name_s);
+
+        getline(iss, numStr);
+        s.cex = stoi(numStr);
+
+        getline(iss, numStr);
+        s.workingcex = stoi(numStr);
+
+        getline(iss, numStr);
+        s.k = stod(numStr);
+    }
+    return in;
+}
+
+/*
+vector<truba> finPipes()
+{
+    ifstream in("base.txt");
+    vector<truba> ts;
+    truba t;
+    while (in >> t)
+    {
+        ts.push_back(t);
+    }
+
+    in.close();
+    return ts;
+}
+*/
+
+void foutPipe(truba &t)
 {
     ofstream out("base.txt");
     if (t.name_t == "_" || t.d == 0 || t.len == 0)
@@ -100,14 +209,15 @@ void fout(truba &t, station &s)
     {
         if (out.is_open())
         {
-            out << "t" << endl
-                << t.name_t << endl
-                << t.len << endl
-                << t.d << endl
-                << t.remont << endl;
+            out << t;
+            out.close();
             cout << "\npipe saved successfully\n";
         }
     }
+}
+void foutKS(station &s)
+{
+    ofstream out("base.txt");
     if (s.name_s == "_" || s.cex == 0)
     {
         cout << "\nno station\n";
@@ -116,63 +226,48 @@ void fout(truba &t, station &s)
     {
         if (out.is_open())
         {
-            out << "s" << endl
-                << s.name_s << endl
-                << s.cex << endl
-                << s.workingcex << endl
-                << s.k << endl;
+            out << s;
+            out.close();
             cout << "\nstation saved successfully\n";
         }
     }
-    out.close();
-};
-
-//----------------------------------------------------------
-
-void fin(truba &t, station &s)
+}
+void finPipe(truba &t)
 {
-    string id;
     ifstream in("base.txt");
+    string id;
     if (in.is_open())
     {
-        in >> id;
-        if (id == "")
+        getline(in, id);
+        if (id == "t")
         {
-            cout << "\nno data\n";
+            in >> t;
         }
-        else if (id == "t")
+        else if (id == "")
         {
-            // getline(str, sizeof(str))
-            /*getline(file,p.name);
-
-            getline(file, line);
-            p.length = stod(line);
-
-            getline(file, line);
-            p.diameter = stod(line);
-
-            getline(file, line);
-            p.inRepair = stoi(line);
-
-            getline(file,line);*/
-            in >> t.name_t >> t.len >> t.d >> t.remont;
-            cout << "\npipe loaded successfully\n";
-            in >> id;
-            if (id == "s")
-            {
-                in >> s.name_s >> s.cex >> s.workingcex >> s.k;
-                cout << "\nstation loaded successfully\n";
-            }
+            cout << "\nno pipe data\n";
         }
-        else if (id == "s")
-        {
-            in >> s.name_s >> s.cex >> s.workingcex >> s.k;
-            cout << "\nstation loaded successfully\n";
-        }
+        in.close();
     }
-    in.close();
 }
-
+void finKS(station &s)
+{
+    ifstream in("base.txt");
+    string id;
+    if (in.is_open())
+    {
+        getline(in, id);
+        if (id == "s")
+        {
+            in >> s;
+        }
+        else if (id == "")
+        {
+            cout << "\nno station data\n";
+        }
+        in.close();
+    }
+}
 //================================================== input/output ===============================================
 void InputPipe(truba &t)
 {
@@ -293,53 +388,48 @@ int main()
         switch (InputInt_07())
         {
         case (1):
-        {
             system("CLS");
             InputPipe(t);
             break;
-        }
+
         case (2):
-        {
             system("CLS");
             InputKS(s);
             break;
-        }
+
         case (3):
-        {
             system("CLS");
             OutputPipe(t);
             OutputKS(s);
             break;
-        }
+
         case (4):
-        {
             system("CLS");
             EditPipe(t);
             break;
-        }
+
         case (5):
-        {
             system("CLS");
             EditKS(s);
             break;
-        }
+
         case (6):
-        {
             system("CLS");
-            fout(t, s);
+            foutPipe(t);
+            foutKS(s);
             break;
-        }
 
         case (7):
-        {
             system("CLS");
-            fin(t, s);
+            finPipe(t);
+            finKS(s);
             break;
-        }
+
         case (0):
             system("CLS");
             exit(0);
             break;
+
         default:
             cout << "Wrong action\n";
             return 0;
