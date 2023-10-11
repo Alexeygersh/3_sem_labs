@@ -4,6 +4,7 @@
 #include <limits>
 #include <iomanip>
 #include <vector>
+#include <string>
 using namespace std;
 
 struct truba
@@ -13,8 +14,8 @@ struct truba
     int d;
     bool remont;
 
-    friend ostream &operator<<(ostream &out, truba &t);
-    friend istream &operator>>(istream &in, truba &t);
+    // friend ostream& operator<<(ostream& out, const truba& t);
+    // friend istream& operator>>(istream& in, truba& t);
 };
 struct station
 {
@@ -23,16 +24,16 @@ struct station
     int workingcex;
     double k;
 
-    friend ostream &operator<<(ostream &out, station &s);
-    friend istream &operator>>(istream &in, station &s);
+    // friend ostream& operator<<(ostream& out, const station& s);
+    // friend istream& operator>>(istream& in, station& s);
 };
 
-void InputPipe(truba &);
-void InputKS(station &);
+// void InputPipe(truba &);
+// void InputKS(station &);
 
 void menu()
 {
-    cout << "============================================\n"
+    cout << "\n============================================\n"
          << "__________________Menu______________________\n\n"
          << "select one of the following items:\n"
          << "1. Add pipe\n"
@@ -59,39 +60,53 @@ int InputInt_07()
 };
 
 template <typename T>
-void CheckInputInt_NotNULL(T p)
+int InputNum_NotNULL()
 {
-    while (!(cin) || (cin.peek() != '\n') || (p == 0))
+    int p;
+    while (!(cin >> p) || (cin.peek() != '\n') || (p == 0))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> p;
     }
+    return p;
 };
-
-void CheckInputInt(bool p)
+double InputNum_NotNULL()
 {
-    while (!(cin) || (cin.peek() != '\n'))
+    double p;
+    while (!(cin >> p) || (cin.peek() != '\n') || (p == 0))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data" << endl
              << "__> ";
-        cin >> p;
     }
+    return p;
 };
 
-void CheckInput_workingcex(station &s)
+bool InputBool()
 {
-    while ((!(cin) || (cin.peek() != '\n')) || (s.workingcex > s.cex))
+    bool p;
+    while (!(cin >> p) || (cin.peek() != '\n'))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "incorrect data" << endl
+             << "__> ";
+    }
+    return p;
+};
+
+void Input_workingcex(station &s)
+{
+    while ((!(cin >> s.workingcex) || (cin.peek() != '\n')) || (s.workingcex > s.cex))
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "incorrect data, input int<=" << s.cex << endl
              << "__> ";
-        cin >> s.workingcex;
+        // cin >> s.workingcex;
     }
 };
 
@@ -109,16 +124,6 @@ ostream &operator<<(ofstream &out, truba &t)
     return out;
 }
 
-/*void foutPipes(const vector<truba> &ts)
-{
-    ofstream out("base.txt");
-    for (const auto &t : ts)
-    {
-        foutPipe(out, t);
-    }
-    out.close();
-}
-*/
 ostream &operator<<(ofstream &out, station &s)
 {
     out << "s" << endl
@@ -129,56 +134,32 @@ ostream &operator<<(ofstream &out, station &s)
 
     return out;
 };
+/*void foutPipes(const vector<truba> &ts)
+{
+    ofstream out("base.txt");
+    for (const auto &t : ts)
+    {
+        foutPipe(out, t);
+    }
+    out.close();
+}
+*/
 
 //----------------------
 
 istream &operator>>(istream &in, truba &t)
 {
-    string line;
-    if (getline(in, line))
-    {
-        istringstream iss(line);
-        string numStr;
-        string id;
 
-        getline(iss, id);
-
-        getline(iss, t.name_t);
-
-        getline(iss, numStr);
-        t.len = stod(numStr);
-
-        getline(iss, numStr);
-        t.d = stoi(numStr);
-
-        getline(iss, numStr);
-        t.remont = stoi(numStr);
-    }
+    getline(in, t.name_t);
+    in >> t.len >> t.d >> t.remont;
     return in;
 }
 
 istream &operator>>(istream &in, station &s)
 {
-    string line;
-    if (getline(in, line))
-    {
-        istringstream iss(line);
-        string numStr;
-        string id;
 
-        getline(iss, id);
-
-        getline(iss, s.name_s);
-
-        getline(iss, numStr);
-        s.cex = stoi(numStr);
-
-        getline(iss, numStr);
-        s.workingcex = stoi(numStr);
-
-        getline(iss, numStr);
-        s.k = stod(numStr);
-    }
+    getline(in, s.name_s);
+    in >> s.cex >> s.workingcex >> s.k;
     return in;
 }
 
@@ -200,37 +181,47 @@ vector<truba> finPipes()
 
 void foutPipe(truba &t)
 {
-    ofstream out("base.txt");
     if (t.name_t == "_" || t.d == 0 || t.len == 0)
     {
-        cout << "\nno pipe\n";
+        cout << "no pipe\n";
     }
     else
     {
+        ofstream out;
+        out.open("base.txt");
         if (out.is_open())
         {
             out << t;
-            out.close();
-            cout << "\npipe saved successfully\n";
+            cout << "pipe saved successfully\n";
         }
     }
 }
 void foutKS(station &s)
 {
-    ofstream out("base.txt");
     if (s.name_s == "_" || s.cex == 0)
     {
-        cout << "\nno station\n";
+        cout << "no station\n";
     }
     else
     {
+        ofstream out;
+        out.open("base.txt", ios::app);
         if (out.is_open())
         {
             out << s;
-            out.close();
-            cout << "\nstation saved successfully\n";
+            cout << "station saved successfully\n";
         }
+        out.close();
     }
+}
+ifstream &GotoLine(ifstream &file, unsigned int num)
+{
+    file.seekg(ios::beg);
+    for (unsigned int i = 0; i < num - 1; ++i)
+    {
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    return file;
 }
 void finPipe(truba &t)
 {
@@ -242,11 +233,13 @@ void finPipe(truba &t)
         if (id == "t")
         {
             in >> t;
+            cout << "pipe loaded\n";
         }
         else if (id == "")
         {
-            cout << "\nno pipe data\n";
+            cout << "no pipe data\n";
         }
+        // in.peek();
         in.close();
     }
 }
@@ -260,13 +253,36 @@ void finKS(station &s)
         if (id == "s")
         {
             in >> s;
+            cout << "station loaded\n";
         }
         else if (id == "")
         {
-            cout << "\nno station data\n";
+            cout << "no station data\n";
         }
+        else
+        {
+            GotoLine(in, 6);
+            getline(in, id);
+            if (id == "s")
+            {
+                in >> s;
+                cout << "station loaded\n";
+            }
+            else if (id == "")
+            {
+                cout << "no station data\n";
+            }
+        }
+
         in.close();
     }
+}
+
+void clsFile()
+{
+    ofstream cl;
+    cl.open("base.txt", std::ofstream::out | std::ofstream::trunc);
+    cl.close();
 }
 //================================================== input/output ===============================================
 void InputPipe(truba &t)
@@ -276,20 +292,17 @@ void InputPipe(truba &t)
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, t.name_t);
 
-    cout << "\nInput length pipe\n"
+    cout << "Input length pipe\n"
          << "__> ";
-    cin >> t.len;
-    CheckInputInt_NotNULL(t.len);
+    t.len = InputNum_NotNULL();
 
     cout << "Input diameter pipe\n"
          << "__> ";
-    cin >> t.d;
-    CheckInputInt_NotNULL(t.d);
+    t.d = InputNum_NotNULL();
 
     cout << "Input mending(1/0)\n"
          << "__> ";
-    cin >> t.remont;
-    CheckInputInt(t.remont);
+    t.remont = InputBool();
 }
 void InputKS(station &s)
 {
@@ -300,21 +313,18 @@ void InputKS(station &s)
 
     cout << "\nInput number of workshops\n"
          << "__> ";
-    cin >> s.cex;
-    CheckInputInt_NotNULL(s.cex);
+    s.cex = InputNum_NotNULL();
 
     cout << "Input number of workshops in work\n"
          << "__> ";
-    cin >> s.workingcex;
-    CheckInput_workingcex(s);
+    Input_workingcex(s);
 
     cout << "Input ratio\n"
          << "__> ";
-    cin >> s.k;
-    CheckInputInt_NotNULL(s.k);
+    s.k = InputNum_NotNULL();
 };
 //-------------------------------------------------------
-void OutputPipe(truba &t)
+void OutputPipe(const truba &t)
 {
     if (t.name_t == "_" || t.d == 0 || t.len == 0)
     {
@@ -328,7 +338,7 @@ void OutputPipe(truba &t)
              << "Mending:  " << t.remont << "\n";
     }
 };
-void OutputKS(station &s)
+void OutputKS(const station &s)
 {
     if (s.cex == 0 || s.name_s == "_")
     {
@@ -349,28 +359,27 @@ void EditPipe(truba &t)
 {
     if (t.name_t == "_" || t.d == 0 || t.len == 0)
     {
-        cout << "\n input statements doesnt exist !!!\n";
+        cout << "input statements doesnt exist !!!\n";
     }
     else
     {
         cout << "Input mending(0/1)\n"
              << "__> ";
-        cin >> t.remont;
-        CheckInputInt(t.remont);
+        t.remont = InputBool();
     }
 };
 void EditKS(station &s)
 {
     if (s.k == 0 || s.cex == 0 || s.name_s == "_")
     {
-        cout << "\n input statements doesnt exist \n";
+        cout << "input statements doesnt exist \n";
     }
     else
     {
         cout << "Input number of workshops in work\n"
              << "__> ";
-        cin >> s.workingcex;
-        CheckInput_workingcex(s);
+        // cin >> s.workingcex;
+        Input_workingcex(s);
     }
 };
 
@@ -388,48 +397,57 @@ int main()
         switch (InputInt_07())
         {
         case (1):
+        {
             system("CLS");
             InputPipe(t);
             break;
-
+        }
         case (2):
+        {
             system("CLS");
             InputKS(s);
             break;
-
+        }
         case (3):
+        {
             system("CLS");
             OutputPipe(t);
             OutputKS(s);
             break;
-
+        }
         case (4):
+        {
             system("CLS");
             EditPipe(t);
             break;
-
+        }
         case (5):
+        {
             system("CLS");
             EditKS(s);
             break;
-
+        }
         case (6):
+        {
             system("CLS");
+            clsFile();
             foutPipe(t);
             foutKS(s);
             break;
-
+        }
         case (7):
+        {
             system("CLS");
             finPipe(t);
             finKS(s);
             break;
-
+        }
         case (0):
+        {
             system("CLS");
             exit(0);
             break;
-
+        }
         default:
             cout << "Wrong action\n";
             return 0;
