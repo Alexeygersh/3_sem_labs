@@ -179,109 +179,61 @@ vector<truba> finPipes()
 }
 */
 
-void foutPipe(truba &t)
+void fout(truba &t, station &s)
 {
-    if (t.name_t == "_" || t.d == 0 || t.len == 0)
+    ofstream out;
+    out.open("base.txt");
+    if (out.is_open())
     {
-        cout << "no pipe\n";
-    }
-    else
-    {
-        ofstream out;
-        out.open("base.txt");
-        if (out.is_open())
-        {
+        if (t.len > 0)
             out << t;
-            cout << "pipe saved successfully\n";
-        }
-    }
-}
-void foutKS(station &s)
-{
-    if (s.name_s == "_" || s.cex == 0)
-    {
-        cout << "no station\n";
-    }
-    else
-    {
-        ofstream out;
-        out.open("base.txt", ios::app);
-        if (out.is_open())
-        {
+        if (s.cex > 0)
             out << s;
-            cout << "station saved successfully\n";
-        }
-        out.close();
     }
+    out.close();
 }
-ifstream &GotoLine(ifstream &file, unsigned int num)
-{
-    file.seekg(ios::beg);
-    for (unsigned int i = 0; i < num - 1; ++i)
-    {
-        file.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-    return file;
-}
-void finPipe(truba &t)
-{
-    ifstream in("base.txt");
-    string id;
-    if (in.is_open())
-    {
-        getline(in, id);
-        if (id == "t")
-        {
-            in >> t;
-            cout << "pipe loaded\n";
-        }
-        else if (id == "")
-        {
-            cout << "no pipe data\n";
-        }
-        // in.peek();
-        in.close();
-    }
-}
-void finKS(station &s)
+
+// ifstream &GotoLine(ifstream &file, unsigned int num)
+// {
+//     file.seekg(ios::beg);
+//     for (unsigned int i = 0; i < num - 1; ++i)
+//     {
+//         file.ignore(numeric_limits<streamsize>::max(), '\n');
+//     }
+//     return file;
+// }
+void fin(truba &t, station &s)
 {
     ifstream in("base.txt");
     string id;
     if (in.is_open())
     {
-        getline(in, id);
-        if (id == "s")
+        while (getline(in, id))
         {
-            in >> s;
-            cout << "station loaded\n";
-        }
-        else if (id == "")
-        {
-            cout << "no station data\n";
-        }
-        else
-        {
-            GotoLine(in, 6);
-            getline(in, id);
-            if (id == "s")
+            if (id == "t")
+            {
+                in >> t;
+                cout << "pipe loaded\n";
+            }
+            else if (id == "s")
             {
                 in >> s;
                 cout << "station loaded\n";
             }
-            else if (id == "")
+            else
             {
-                cout << "no station data\n";
+                cout << "no pipe data\n";
             }
         }
-
-        in.close();
+        // in.peek();
     }
+    in.close();
 }
 
 void clsFile()
 {
     ofstream cl;
-    cl.open("base.txt", std::ofstream::out | std::ofstream::trunc);
+    cl.open("base.txt"); //, std::ofstream::out | std::ofstream::trunc);
     cl.close();
 }
 //================================================== input/output ===============================================
@@ -430,16 +382,14 @@ int main()
         case (6):
         {
             system("CLS");
-            clsFile();
-            foutPipe(t);
-            foutKS(s);
+            // clsFile();
+            fout(t, s);
             break;
         }
         case (7):
         {
             system("CLS");
-            finPipe(t);
-            finKS(s);
+            fin(t, s);
             break;
         }
         case (0):
