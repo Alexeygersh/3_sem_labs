@@ -1,43 +1,32 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include <iostream>
+
 class station
 {
-    int id;
-    static int NextId;
+private:
+    static int newID;
 
 public:
+    int ID;
     std::string name_s;
     int cex;
     int workingcex;
     double k;
 
+    station() : ID(newID++) {}
+    int getID()
+    {
+        return ID;
+    }
+
     friend std::ostream &operator<<(std::ostream &out, const station &s);
     friend std::istream &operator>>(std::istream &in, station &s);
+    friend std::ofstream &operator<<(std::ofstream &outf, const station &s);
+    friend std::ifstream &operator>>(std::ifstream &inf, station &s);
 };
 
-std::ostream &operator<<(std::ofstream &out, station &s)
-{
-    out << "s"
-        << "\n"
-        << s.name_s << "\n"
-        << s.cex << "\n"
-        << s.workingcex << "\n"
-        << s.k << "\n";
-
-    return out;
-};
-std::istream &operator>>(std::istream &in, station &s)
-{
-    getline(in, s.name_s);
-    in >> s.cex >> s.workingcex >> s.k;
-    return in;
-}
-std::ostream &operator<<(std::ostream &out, const station &s)
-{
-    out << "Name KS:  " << s.name_s << "\n"
-        << "Number of workshops:  " << s.cex << "\n"
-        << "Number of workshops in work:  " << s.workingcex << "\n"
-        << "Ratio:  " << s.k << "\n";
-    return out;
-}
+void InputKS(station &s);
+void OutKS(const station &s);
+void EditKS(station &s);
