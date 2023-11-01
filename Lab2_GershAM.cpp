@@ -1,14 +1,6 @@
-// #include <fstream>
-// #include <stdlib.h>
-// #include <limits>
-#include <unordered_map>
-// #include <string>
-#include <typeinfo>
+#include "utils.h"
 #include "pipe.h"
 #include "station.h"
-
-// #include <algorithm>
-// #include <iterator>
 using namespace std;
 
 void menu()
@@ -21,22 +13,12 @@ void menu()
               << "3. View all objects\n"
               << "4. Edit pipe\n"
               << "5. Edit KS\n"
-              << "6. Save\n"
-              << "7. Load\n"
+              << "6. Delete pipe\n"
+              << "7. Delete KS\n"
+              << "8. Save\n"
+              << "9. Load\n"
+              << "10. Find\n"
               << "0. Exit\n";
-};
-
-int InputInt_07()
-{
-    int p = 0;
-    while (!(cin >> p) || (cin.peek() != '\n') || (p > 7) || (p < 0))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "incorrect data" << endl
-             << "__> ";
-    }
-    return p;
 };
 
 //================================================== input/output file ===============================================
@@ -48,16 +30,14 @@ void fout(const string &file, const unordered_map<int, pipe> &ps, const unordere
     {
         for (auto &[id, p] : ps)
         {
-            if (p.len > 0)
-            {
-                outf << p;
-            }
+            // if (p.len > 0)
+            outf << p;
         }
         for (auto &[id, s] : ss)
         {
 
-            if (s.cex > 0)
-                outf << s;
+            // if (station::s.cex > 0)
+            outf << s;
         }
     }
 }
@@ -72,35 +52,68 @@ void fin(const string &file, unordered_map<int, pipe> &ps, unordered_map<int, st
         {
             if (flag == "p")
             {
-                pipe p = {};
-                ps.insert(make_pair(p.ID, p));
+                pipe p;
+                fin >> p;
+                ps.insert(make_pair(p.get_ID(), p));
             }
             if (flag == "s")
             {
-                station s = {};
-                ss.insert(make_pair(s.ID, s));
+                station s;
+                fin >> s;
+                ss.insert(make_pair(s.get_ID(), s));
             }
         }
     }
     in.close();
 }
 
-// v.reserve(10)
-
-// ifstream &GotoLine(ifstream &file, unsigned int num)
-// {
-//     file.seekg(ios::beg);
-//     for (unsigned int i = 0; i < num - 1; ++i)
-//     {
-//         file.ignore(numeric_limits<streamsize>::max(), '\n');
-//     }
-//     return file;
-// }
-
-/* void clsFile(const string &file)
+int find(unordered_map<int, pipe> &ps, unordered_map<int, station> &ss)
 {
-    ofstream cl(file, ofstream::trunc);
-} */
+    /*
+    string occurrence;
+    cout << "Input occurrence\n";
+    cin >> occurrence;
+    cout << "what do you want to find?\n"
+         << "1. Pipe(s)\n"
+         << "2. Station(s)\n"
+         << "0. exit to menu\n";
+    int choice = InputInt_10();
+    if (choice == 1)
+    {
+        std::istringstream iss(std::move(occurrence));
+        std::vector<std::string> found;
+
+        int max_count = 0;
+
+        // now simply extract strings until you reach end-of-file.
+        while (iss >> occurrence)
+        {
+            int tmp = ++ss[occurrence];
+            if (tmp == max_count)
+            {
+                found.push_back(occurrence);
+            }
+            else if (tmp > max_count)
+            {
+                max_count = tmp;
+                found.clear();
+                found.push_back(occurrence);
+            }
+        }
+
+        for (auto &[id, s] : ss)
+            std::cout << s.first << " : " << s.second << "\n";
+    }
+    else if (choise == 2)
+    {
+    }
+    else
+    {
+        return 0;
+    }
+    */
+    return 0;
+}
 
 int main()
 {
@@ -109,58 +122,77 @@ int main()
     while (1)
     {
         menu();
-        switch (InputInt_07())
+        switch (InputNum<int>(0, 10))
         {
         case (1):
         {
             // system("CLS");
-            pipe p = {};
-            InputPipe(p);
-            ps.insert(make_pair(p.ID, p));
+            pipe p;
+            p.InputPipe(p);
+            ps.insert(make_pair(p.get_ID(), p.get_Pipe()));
             break;
         }
         case (2):
         {
-            station s = {};
-            InputKS(s);
-            ss.insert(make_pair(s.ID, s));
+            station s;
+            s.InputKS(s);
+            ss.insert(make_pair(s.get_ID(), s.get_KS()));
             break;
         }
         case (3):
         {
             for (auto &[id, p] : ps)
-                OutPipe(p);
+                cout << p;
             for (auto &[id, s] : ss)
-                OutKS(s);
-            // for_each(ss.begin(), ss.end(), OutKS);
+                cout << s;
             break;
         }
         case (4):
         {
-            // EditPipe(p);
+            pipe p;
+            p.EditPipe(ps);
             break;
         }
         case (5):
         {
-            // EditKS(s);
+            station s;
+            s.EditKS(ss);
             break;
         }
         case (6):
         {
-            string file;
-            cout << "Input name file like 'something.txt'\n";
-            cin >> file;
-            // fout(file, ps, ss);
+            pipe p;
+            p.delPipe(ps);
             break;
         }
         case (7):
+        {
+            station s;
+            s.delKS(ss);
+            break;
+        }
+        case (8):
+        {
+            string file;
+            cout << "Input name file like 'something.txt'\n";
+            cin >> file;
+            fout(file, ps, ss);
+            break;
+        }
+        case (9):
         {
             string file;
             cout << "Input name file like 'something.txt'\n";
             // cin.ignore(numeric_limits<streamsize>::max(), '\n');
             // getline(cin, file);
             cin >> file;
-            // fin(file, ps, ss);
+            fin(file, ps, ss);
+            break;
+        }
+        case (10):
+        {
+
+            // find(ps, ss);
             break;
         }
         case (0):

@@ -4,29 +4,15 @@
 #include <limits>
 
 template <typename T>
-T InputNum()
+T InputNum(T start, T end)
 {
     T param;
-    if (std::string(typeid(param).name()) == "b")
+    while (!(std::cin >> param) || (std::cin.peek() != '\n') || (param < start) || (param > end))
     {
-        while (!(std::cin >> param) || (std::cin.peek() != '\n'))
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "incorrect data\n"
-                      << "__> ";
-        }
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "incorrect data\n"
+                  << "__> ";
     }
-    else
-    {
-        while (!(std::cin >> param) || (std::cin.peek() != '\n') || (param == 0))
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "incorrect data\n"
-                      << "__> ";
-        }
-    }
-
     return param;
 };

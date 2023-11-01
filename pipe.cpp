@@ -4,74 +4,92 @@
 #include <limits>
 #include <string>
 #include <fstream>
+#include <unordered_map>
 
 int pipe::newID = 0;
+// void setPipe(int ID, std::string name_p, double len, int d, bool remont);
+// pipe::getPipe();
 
 std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
 {
-
-    outf << "p"
-         << "\n"
-         << p.name_p << "\n"
-         << p.len << "\n"
-         << p.d << "\n"
-         << p.remont << "\n";
+    outf << "p\n"
+         << p.get_ID() << "\n"
+         << p.get_name_p() << "\n"
+         << p.get_len() << "\n"
+         << p.get_d() << "\n"
+         << p.get_remont() << "\n";
 
     return outf;
 }
-std::ifstream &operator>>(std::ifstream &inf, pipe &p)
+// std::ifstream &operator>>(std::ifstream &fin, pipe &p)
+// {
+//     std::string name;
+//     int id;
+//     double len;
+//     int d;
+//     bool remont;
+//     inf >> id;
+//     getline(inf, name);
+//     inf >> len >> d >> remont;
+//     p.set_ID(id);
+//     p.setPipe(name, len, d, remont);
+//     return inf;
+// }
+std::ostream &operator<<(std::ostream &out, pipe &p)
 {
-    getline(inf, p.name_p);
-    inf >> p.len >> p.d >> p.remont;
-    return inf;
-}
-std::ostream &operator<<(std::ostream &out, const pipe &p)
-{
-    out << "Name pipe:  " << p.name_p << "\n"
-        << "Length pipe:  " << p.len << "\n"
-        << "Diameter pipe:  " << p.d << "\n"
-        << "Mending:  " << p.remont << "\n";
+    out << "ID " << p.get_ID() << "\n"
+        << "Name pipe:  " << p.get_name_p() << "\n"
+        << "Length pipe:  " << p.get_len() << "\n"
+        << "Diameter pipe:  " << p.get_d() << "\n"
+        << "Mending:  " << p.get_remont() << "\n";
     return out;
 }
 
-void InputPipe(pipe &p)
+void pipe::InputPipe(pipe &p)
 {
+    std::string name;
     std::cout << "Input name pipe\n"
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    getline(std::cin, p.name_p);
+    getline(std::cin, name);
 
     std::cout << "Input length pipe\n"
               << "__> ";
-    p.len = InputNum<double>();
+    double l;
+    l = InputNum<double>(1, 1000000000);
 
     std::cout << "Input diameter pipe\n"
               << "__> ";
-    p.d = InputNum<int>();
+    int di;
+    di = InputNum<int>(1, 100000);
 
     std::cout << "Input mending(1/0)\n"
               << "__> ";
-    p.remont = InputNum<bool>();
+    bool r;
+    r = InputNum<bool>(0, 1);
+
+    p.set_Pipe(name, l, di, r);
 }
 
-void OutPipe(const pipe &p)
+void pipe::EditPipe(std::unordered_map<int, pipe> &ps)
 {
-    /*if (p.len == 0)
-        std::cout << "No Pipe\n";
-    else*/
-    std::cout << p << "\n";
+    pipe p = {};
+    int id;
+    std::cout << "select id pipe to edit\n";
+    std::cin >> id;
+    p.set_Pipe(ps.at(id).get_name_p(), ps.at(id).get_len(), ps.at(id).get_d(), ps.at(id).get_remont());
+    std::cout << "Input mending(0/1)\n"
+              << "__> ";
+    p.set_remont(InputNum<bool>(0, 2));
+    ps[id] = p.get_Pipe();
 };
 
-void EditPipe(pipe &p)
+void pipe::delPipe(std::unordered_map<int, pipe> &ps)
 {
-    if (p.len == 0)
-    {
-        std::cout << "input statements doesnt exist !!!\n";
-    }
-    else
-    {
-        std::cout << "Input mending(0/1)\n"
-                  << "__> ";
-        p.remont = InputNum<bool>();
-    }
-};
+    pipe p = {};
+    std::cout << "select id pipe to delete\n";
+    int id;
+    std::cin >> id;
+    p = ps.at(id);
+    ps.erase(id);
+}

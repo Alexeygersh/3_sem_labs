@@ -2,31 +2,44 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
 
 class pipe
 {
 private:
-    static int newID;
-
-public:
     int ID;
     std::string name_p;
     double len;
     int d;
     bool remont;
 
-    pipe() : ID(newID++) {}
-    int getID()
-    {
-        return ID;
-    }
+    friend std::ostream &operator<<(std::ostream &out, pipe &p);
 
-    friend std::ifstream &operator<<(std::ifstream &inf, pipe &p);
     friend std::ofstream &operator<<(std::ofstream &outf, const pipe &p);
-    friend std::ostream &operator<<(std::ostream &out, const pipe &p);
-    friend std::istream &operator>>(std::istream &in, pipe &p);
-};
+    friend std::ifstream &operator>>(std::ifstream &fin, pipe &p);
 
-void InputPipe(pipe &p);
-void OutPipe(const pipe &p);
-void EditPipe(pipe &p);
+public:
+    static int newID;
+    pipe() : ID(newID++) {}
+
+    void InputPipe(pipe &p);
+    void EditPipe(std::unordered_map<int, pipe> &ps);
+    void delPipe(std::unordered_map<int, pipe> &ps);
+
+    int get_ID() const { return ID; }
+    std::string get_name_p() const { return this->name_p; }
+    double get_len() const { return this->len; }
+    int get_d() const { return this->d; }
+    bool get_remont() const { return this->remont; }
+
+    pipe get_Pipe() { return *this; }
+
+    void set_Pipe(std::string name_p, double len, int d, bool remont)
+    {
+        this->name_p = name_p;
+        this->len = len;
+        this->d = d;
+        this->remont = remont;
+    }
+    void set_remont(bool remont) { this->remont = remont; }
+};

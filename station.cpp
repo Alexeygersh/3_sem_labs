@@ -4,85 +4,94 @@
 #include <limits>
 #include <string>
 #include <fstream>
+#include <unordered_map>
 
 int station::newID = 0;
 
 std::ofstream &operator<<(std::ofstream &outf, const station &s)
 {
-    outf << "s"
-         << "\n"
-         << s.name_s << "\n"
-         << s.cex << "\n"
-         << s.workingcex << "\n"
-         << s.k << "\n";
+    outf << "s\n"
+         << s.get_ID() << "\n"
+         << s.get_name_s() << "\n"
+         << s.get_cex() << "\n"
+         << s.get_workingcex() << "\n"
+         << s.get_k() << "\n";
 
     return outf;
 };
-std::ifstream &operator>>(std::ifstream &inf, station &s)
-{
-    getline(inf, s.name_s);
-    inf >> s.cex >> s.workingcex >> s.k;
-    return inf;
-}
+// std::ifstream &operator>>(std::ifstream &inf, station &s)
+// {
+//     getline(inf, s.name_s);
+//     inf >> s.ID >> s.cex >> s.workingcex >> s.k;
+//     return inf;
+// }
 std::ostream &operator<<(std::ostream &out, const station &s)
 {
-    out << "Name KS:  " << s.name_s << "\n"
-        << "Number of workshops:  " << s.cex << "\n"
-        << "Number of workshops in work:  " << s.workingcex << "\n"
-        << "Ratio:  " << s.k << "\n";
+    out << "ID " << s.get_ID() << "\n"
+        << "Name KS:  " << s.get_name_s() << "\n"
+        << "Number of workshops:  " << s.get_cex() << "\n"
+        << "Number of workshops in work:  " << s.get_workingcex() << "\n"
+        << "Ratio:  " << s.get_k() << "\n";
     return out;
 }
 
-void Input_workingcex(station &s)
+int inputWcex(int cexx, int wcex)
 {
-    while ((!(std::cin >> s.workingcex) || (std::cin.peek() != '\n')) || (s.workingcex > s.cex))
+    while ((!(std::cin >> wcex) || (std::cin.peek() != '\n')) || (wcex > cexx))
     {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "incorrect data, input int<=" << s.cex << "\n"
+        std::cout << "incorrect data, input int<=" << wcex << "\n"
                   << "__> ";
     }
-};
+    return wcex;
+}
 
-void InputKS(station &s)
+void station::InputKS(station &s)
 {
+    std::string name;
     std::cout << "Input name KS\n"
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    getline(std::cin, s.name_s);
+    getline(std::cin, name);
 
     std::cout << "\nInput number of workshops\n"
               << "__> ";
-    s.cex = InputNum<int>();
+    int cexx;
+    cexx = InputNum<int>(1, 100000);
 
     std::cout << "Input number of workshops in work\n"
               << "__> ";
-    Input_workingcex(s);
+    int wcex = inputWcex(cexx, wcex);
 
     std::cout << "Input ratio\n"
               << "__> ";
-    s.k = InputNum<int>();
+    bool kf;
+    kf = InputNum<int>(0, 100);
+
+    s.set_KS(name, cexx, wcex, kf);
 };
 
-void OutKS(const station &s)
-{
-    /*if (s.cex == 0)
-        std::cout << "No KS\n";
-    else*/
-    std::cout << s << "\n";
-};
+// void station::EditKS(std::unordered_map<int, station> &ss)
+// {
+//     station s = {};
+//     int id;
+//     std::cout << "select id station to edit\n";
+//     std::cin >> id;
+//     s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
+//     std::cout << "Input number of workshops in work\n"
+//               << "__> ";
+//     s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
+//     ss.erase(id);
+//     ss.insert(std::make_pair(id, s));
+// };
 
-void EditKS(station &s)
+void station::delKS(std::unordered_map<int, station> &ss)
 {
-    if (s.cex == 0)
-    {
-        std::cout << "input statements doesnt exist \n";
-    }
-    else
-    {
-        std::cout << "Input number of workshops in work\n"
-                  << "__> ";
-        // cin >> s.workingcex;
-        Input_workingcex(s);
-    }
-};
+    station s = {};
+    std::cout << "select id station to delete\n";
+    int id;
+    std::cin >> id;
+    s = ss.at(id);
+    ss.erase(id);
+}
