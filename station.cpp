@@ -63,7 +63,7 @@ void station::InputKS(station &s)
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin, name);
-    std::cerr << name;
+    std::cerr << name << "\n";
 
     std::cout << "\nInput number of workshops\n"
               << "__> ";
@@ -88,7 +88,7 @@ void station::EditKS(std::unordered_map<int, station> &ss)
     int id;
     std::cout << "select id station to edit\n";
     std::cin >> id;
-    std::cerr << id;
+    std::cerr << id << "\n";
     s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
     std::cout << "Input number of workshops in work\n"
               << "__> ";
@@ -102,7 +102,7 @@ void station::delKS(std::unordered_map<int, station> &ss)
     std::cout << "select id station to delete\n";
     int id;
     std::cin >> id;
-    std::cerr << id;
+    std::cerr << id << "\n";
     s = ss.at(id);
     ss.erase(id);
 }

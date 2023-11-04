@@ -49,7 +49,7 @@ void pipe::InputPipe(pipe &p)
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin, name);
-    std::cerr << name;
+    std::cerr << name << "\n";
 
     std::cout << "Input length pipe\n"
               << "__> ";
@@ -75,7 +75,7 @@ void pipe::EditPipe(std::unordered_map<int, pipe> &ps)
     int id;
     std::cout << "select id pipe to edit\n";
     std::cin >> id;
-    std::cerr << id;
+    std::cerr << id << "\n";
     p.set_Pipe(ps.at(id).get_name_p(), ps.at(id).get_len(), ps.at(id).get_d(), ps.at(id).get_remont());
     std::cout << "Input mending(0/1)\n"
               << "__> ";
@@ -89,7 +89,7 @@ void pipe::delPipe(std::unordered_map<int, pipe> &ps)
     std::cout << "select id pipe to delete\n";
     int id;
     std::cin >> id;
-    std::cerr << id;
+    std::cerr << id << "\n";
     p = ps.at(id);
     ps.erase(id);
 }
