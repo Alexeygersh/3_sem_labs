@@ -5,10 +5,9 @@
 #include <string>
 #include <fstream>
 #include <unordered_map>
+#include <vector>
 
 int pipe::newID = 0;
-// void setPipe(int ID, std::string name_p, double len, int d, bool remont);
-// pipe::getPipe();
 
 std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
 {
@@ -18,23 +17,21 @@ std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
          << p.get_len() << "\n"
          << p.get_d() << "\n"
          << p.get_remont() << "\n";
-
     return outf;
 }
-// std::ifstream &operator>>(std::ifstream &fin, pipe &p)
-// {
-//     std::string name;
-//     int id;
-//     double len;
-//     int d;
-//     bool remont;
-//     inf >> id;
-//     getline(inf, name);
-//     inf >> len >> d >> remont;
-//     p.set_ID(id);
-//     p.setPipe(name, len, d, remont);
-//     return inf;
-// }
+std::ifstream &operator>>(std::ifstream &fin, pipe &p)
+{
+    std::string name;
+    int id;
+    double len;
+    int d;
+    bool remont;
+    fin >> id >> name >> len >> d >> remont;
+    p.set_ID(id);
+    p.set_Pipe(name, len, d, remont);
+
+    return fin;
+}
 std::ostream &operator<<(std::ostream &out, pipe &p)
 {
     out << "ID " << p.get_ID() << "\n"
@@ -52,6 +49,7 @@ void pipe::InputPipe(pipe &p)
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin, name);
+    std::cerr << name;
 
     std::cout << "Input length pipe\n"
               << "__> ";
@@ -77,6 +75,7 @@ void pipe::EditPipe(std::unordered_map<int, pipe> &ps)
     int id;
     std::cout << "select id pipe to edit\n";
     std::cin >> id;
+    std::cerr << id;
     p.set_Pipe(ps.at(id).get_name_p(), ps.at(id).get_len(), ps.at(id).get_d(), ps.at(id).get_remont());
     std::cout << "Input mending(0/1)\n"
               << "__> ";
@@ -90,6 +89,7 @@ void pipe::delPipe(std::unordered_map<int, pipe> &ps)
     std::cout << "select id pipe to delete\n";
     int id;
     std::cin >> id;
+    std::cerr << id;
     p = ps.at(id);
     ps.erase(id);
 }

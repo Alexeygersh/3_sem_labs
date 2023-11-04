@@ -8,6 +8,7 @@ class station
 {
 private:
     int ID;
+    static int newID;
     std::string name_s;
     int cex;
     int workingcex;
@@ -19,7 +20,6 @@ private:
     friend std::ifstream &operator>>(std::ifstream &fin, station &s);
 
 public:
-    static int newID;
     station() : ID(newID++) {}
 
     void InputKS(station &s);
@@ -42,4 +42,8 @@ public:
         this->k = k;
     }
     void set_workingcex(int workingcex) { this->workingcex = workingcex; }
+    void set_ID(int ID) { this->ID = ID; }
+    static int get_newID() { return newID; }
+
+    void set_newID(int newID) { this->newID = newID; }
 };

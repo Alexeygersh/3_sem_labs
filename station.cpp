@@ -19,12 +19,20 @@ std::ofstream &operator<<(std::ofstream &outf, const station &s)
 
     return outf;
 };
-// std::ifstream &operator>>(std::ifstream &inf, station &s)
-// {
-//     getline(inf, s.name_s);
-//     inf >> s.ID >> s.cex >> s.workingcex >> s.k;
-//     return inf;
-// }
+
+std::ifstream &operator>>(std::ifstream &fin, station &s)
+{
+
+    std::string name;
+    int id;
+    int cexx;
+    int wcex;
+    double kk;
+    fin >> id >> name >> cexx >> wcex >> kk;
+    s.set_ID(id);
+    s.set_KS(name, cexx, wcex, kk);
+    return fin;
+}
 std::ostream &operator<<(std::ostream &out, const station &s)
 {
     out << "ID " << s.get_ID() << "\n"
@@ -44,6 +52,7 @@ int inputWcex(int cexx, int wcex)
         std::cout << "incorrect data, input int<=" << wcex << "\n"
                   << "__> ";
     }
+    std::cerr << wcex << "\n";
     return wcex;
 }
 
@@ -54,6 +63,7 @@ void station::InputKS(station &s)
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin, name);
+    std::cerr << name;
 
     std::cout << "\nInput number of workshops\n"
               << "__> ";
@@ -72,19 +82,19 @@ void station::InputKS(station &s)
     s.set_KS(name, cexx, wcex, kf);
 };
 
-// void station::EditKS(std::unordered_map<int, station> &ss)
-// {
-//     station s = {};
-//     int id;
-//     std::cout << "select id station to edit\n";
-//     std::cin >> id;
-//     s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
-//     std::cout << "Input number of workshops in work\n"
-//               << "__> ";
-//     s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
-//     ss.erase(id);
-//     ss.insert(std::make_pair(id, s));
-// };
+void station::EditKS(std::unordered_map<int, station> &ss)
+{
+    station s = {};
+    int id;
+    std::cout << "select id station to edit\n";
+    std::cin >> id;
+    std::cerr << id;
+    s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
+    std::cout << "Input number of workshops in work\n"
+              << "__> ";
+    s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
+    ss[id] = s.get_KS();
+};
 
 void station::delKS(std::unordered_map<int, station> &ss)
 {
@@ -92,6 +102,7 @@ void station::delKS(std::unordered_map<int, station> &ss)
     std::cout << "select id station to delete\n";
     int id;
     std::cin >> id;
+    std::cerr << id;
     s = ss.at(id);
     ss.erase(id);
 }

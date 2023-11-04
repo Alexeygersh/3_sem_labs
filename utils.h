@@ -3,6 +3,27 @@
 #include <iostream>
 #include <limits>
 
+class redirect_output_wrapper
+{
+    std::ostream &stream;
+    std::streambuf *const old_buf;
+
+public:
+    redirect_output_wrapper(std::ostream &src)
+        : old_buf(src.rdbuf()), stream(src)
+    {
+    }
+
+    ~redirect_output_wrapper()
+    {
+        stream.rdbuf(old_buf);
+    }
+    void redirect(std::ostream &dest)
+    {
+        stream.rdbuf(dest.rdbuf());
+    }
+};
+
 template <typename T>
 T InputNum(T start, T end)
 {
@@ -11,8 +32,9 @@ T InputNum(T start, T end)
     {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "incorrect data\n"
+        std::cout << "incorrect data, try again\n"
                   << "__> ";
     }
+    std::cerr << param << "\n";
     return param;
 };

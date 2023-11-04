@@ -8,6 +8,8 @@ class pipe
 {
 private:
     int ID;
+    static int newID;
+
     std::string name_p;
     double len;
     int d;
@@ -19,7 +21,6 @@ private:
     friend std::ifstream &operator>>(std::ifstream &fin, pipe &p);
 
 public:
-    static int newID;
     pipe() : ID(newID++) {}
 
     void InputPipe(pipe &p);
@@ -32,7 +33,10 @@ public:
     int get_d() const { return this->d; }
     bool get_remont() const { return this->remont; }
 
-    pipe get_Pipe() { return *this; }
+    pipe get_Pipe()
+    {
+        return *this;
+    }
 
     void set_Pipe(std::string name_p, double len, int d, bool remont)
     {
@@ -42,4 +46,8 @@ public:
         this->remont = remont;
     }
     void set_remont(bool remont) { this->remont = remont; }
+    void set_ID(int ID) { this->ID = ID; }
+    static int get_newID() { return newID; }
+
+    void set_newID(int newID) { this->newID = newID; }
 };
