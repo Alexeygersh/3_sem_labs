@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 #include <limits>
+#include <vector>
+#include <unordered_map>
 
 class redirect_output_wrapper
 {
@@ -38,3 +40,24 @@ T InputNum(T start, T end)
     std::cerr << param << "\n";
     return param;
 };
+
+template <typename T>
+bool ID_IsPresent(std::unordered_map<int, T> &unordered_map,int value)
+{
+    int k=0;
+for(auto kv : unordered_map)
+{    
+    if (kv.first == value)
+    {
+        ++k;
+    }
+}
+if (k == 0)
+{
+    return false;
+}
+else
+{
+    return true;
+}
+}

@@ -69,27 +69,60 @@ void pipe::InputPipe(pipe &p)
     p.set_Pipe(name, l, di, r);
 }
 
-void pipe::EditPipe(std::unordered_map<int, pipe> &ps)
+void pipe::EditPipe(std::unordered_map<int, pipe> &ps,pipe &p)
 {
-    pipe p = {};
+    if(ps.empty())
+    {
+        std::cout<<"No pipe!";
+    }
+    else
+    {
     int id;
     std::cout << "select id pipe to edit\n";
     std::cin >> id;
     std::cerr << id << "\n";
+    if(ID_IsPresent(ps, id) && std::cin.good())
+    {
+    //InputNum<int>(0,id);
+    
+    p.set_ID(id);
     p.set_Pipe(ps.at(id).get_name_p(), ps.at(id).get_len(), ps.at(id).get_d(), ps.at(id).get_remont());
     std::cout << "Input mending(0/1)\n"
               << "__> ";
     p.set_remont(InputNum<bool>(0, 2));
     ps[id] = p.get_Pipe();
+    }
+    else
+    {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Not found \\_(._.)_/ \n";
+    }
+    }
 };
 
-void pipe::delPipe(std::unordered_map<int, pipe> &ps)
+void pipe::delPipe(std::unordered_map<int, pipe> &ps,pipe &p)
 {
-    pipe p = {};
-    std::cout << "select id pipe to delete\n";
-    int id;
-    std::cin >> id;
-    std::cerr << id << "\n";
-    p = ps.at(id);
-    ps.erase(id);
+    if(ps.empty())
+    {
+        std::cout<<"No pipe!";
+    }
+    else
+    {
+        std::cout << "select id pipe to delete\n";
+        int id;
+        std::cin>>id;
+        std::cerr << id << "\n";
+        if(ID_IsPresent(ps, id) && std::cin.good())
+        {
+            p = ps.at(id);
+            ps.erase(id);
+        }
+        else
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Not found \\_(._.)_/ \n";
+        }
+    }
 }

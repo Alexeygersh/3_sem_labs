@@ -23,8 +23,8 @@ public:
     station() : ID(newID++) {}
 
     void InputKS(station &s);
-    void EditKS(std::unordered_map<int, station> &ss);
-    void delKS(std::unordered_map<int, station> &ss);
+    void EditKS(std::unordered_map<int, station> &ss, station &s);
+    void delKS(std::unordered_map<int, station> &ss, station &s);
 
     int get_ID() const { return ID; }
     std::string get_name_s() const { return this->name_s; }

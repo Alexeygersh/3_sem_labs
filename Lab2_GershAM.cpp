@@ -1,7 +1,6 @@
 #include "utils.h"
 #include "pipe.h"
 #include "station.h"
-#include <vector>
 // #include <chrono>
 
 using namespace std;
@@ -249,25 +248,25 @@ int main()
         case (4):
         {
             pipe p;
-            p.EditPipe(ps);
+            p.EditPipe(ps,p);
             break;
         }
         case (5):
         {
             station s;
-            s.EditKS(ss);
+            s.EditKS(ss,s);
             break;
         }
         case (6):
         {
             pipe p;
-            p.delPipe(ps);
+            p.delPipe(ps,p);
             break;
         }
         case (7):
         {
             station s;
-            s.delKS(ss);
+            s.delKS(ss,s);
             break;
         }
         case (8):

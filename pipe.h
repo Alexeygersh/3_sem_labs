@@ -24,8 +24,8 @@ public:
     pipe() : ID(newID++) {}
 
     void InputPipe(pipe &p);
-    void EditPipe(std::unordered_map<int, pipe> &ps);
-    void delPipe(std::unordered_map<int, pipe> &ps);
+    void EditPipe(std::unordered_map<int, pipe> &ps,pipe &p);
+    void delPipe(std::unordered_map<int, pipe> &ps,pipe &p);
 
     int get_ID() const { return ID; }
     std::string get_name_p() const { return this->name_p; }
