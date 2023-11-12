@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-int pipe::newID = 0;
+int pipe::newID = 1;
 
 std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
 {
@@ -42,87 +42,41 @@ std::ostream &operator<<(std::ostream &out, pipe &p)
     return out;
 }
 
-void pipe::InputPipe(pipe &p)
+
+std::istream &operator>>(std::istream &in, pipe &p)
 {
-    std::string name;
     std::cout << "Input name pipe\n"
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    getline(std::cin, name);
-    std::cerr << name << "\n";
+    getline(std::cin, p.name_p);
+    std::cerr << p.name_p << "\n";
 
     std::cout << "Input length pipe\n"
               << "__> ";
-    double l;
-    l = InputNum<double>(1, 1000000000);
+    p.len = InputNum<double>(1, 1000000000);
 
     std::cout << "Input diameter pipe\n"
               << "__> ";
-    int di;
-    di = InputNum<int>(1, 100000);
+    p.d = InputNum<int>(1, 100000);
 
     std::cout << "Input mending(1/0)\n"
               << "__> ";
-    bool r;
-    r = InputNum<bool>(0, 1);
+    p.remont = InputNum<bool>(0, 1);
 
-    p.set_Pipe(name, l, di, r);
+    return in;
 }
 
-void pipe::EditPipe(std::unordered_map<int, pipe> &ps,pipe &p)
+void addPipe(std::unordered_map <int,pipe>&ps)
 {
-    if(ps.empty())
-    {
-        std::cout<<"No pipe!";
-    }
-    else
-    {
-    int id;
-    std::cout << "select id pipe to edit\n";
-    std::cin >> id;
-    std::cerr << id << "\n";
-    if(ID_IsPresent(ps, id) && std::cin.good())
-    {
-    //InputNum<int>(0,id);
-    
-    p.set_ID(id);
-    p.set_Pipe(ps.at(id).get_name_p(), ps.at(id).get_len(), ps.at(id).get_d(), ps.at(id).get_remont());
-    std::cout << "Input mending(0/1)\n"
-              << "__> ";
-    p.set_remont(InputNum<bool>(0, 2));
-    ps[id] = p.get_Pipe();
-    }
-    else
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Not found \\_(._.)_/ \n";
-    }
-    }
-};
-
-void pipe::delPipe(std::unordered_map<int, pipe> &ps,pipe &p)
-{
-    if(ps.empty())
-    {
-        std::cout<<"No pipe!";
-    }
-    else
-    {
-        std::cout << "select id pipe to delete\n";
-        int id;
-        std::cin>>id;
-        std::cerr << id << "\n";
-        if(ID_IsPresent(ps, id) && std::cin.good())
-        {
-            p = ps.at(id);
-            ps.erase(id);
-        }
-        else
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Not found \\_(._.)_/ \n";
-        }
-    }
+    pipe pipe;
+    std::cin>>pipe;
+    ps.insert(std::make_pair(pipe.get_ID(), pipe));
 }
+
+
+// void EditPipe(bool new_status)
+// {
+//     pipe::set_remont(new_status);
+// };
+
+

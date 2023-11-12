@@ -56,88 +56,66 @@ int inputWcex(int cexx, int wcex)
     return wcex;
 }
 
-void station::InputKS(station &s)
+std::istream &operator>>(std::istream &in, station &s)
 {
-    std::string name;
     std::cout << "Input name KS\n"
               << "__> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    getline(std::cin, name);
-    std::cerr << name << "\n";
+    getline(std::cin, s.name_s);
+    std::cerr << s.name_s << "\n";
 
     std::cout << "\nInput number of workshops\n"
               << "__> ";
-    int cexx;
-    cexx = InputNum<int>(1, 100000);
+    s.cex = InputNum<int>(1, 100000);
 
     std::cout << "Input number of workshops in work\n"
               << "__> ";
-    int wcex = inputWcex(cexx, wcex);
+    s.workingcex = inputWcex(s.cex, s.workingcex);
 
     std::cout << "Input ratio\n"
               << "__> ";
-    bool kf;
-    kf = InputNum<int>(0, 100);
+    s.k = InputNum<int>(0, 100);
 
-    s.set_KS(name, cexx, wcex, kf);
-};
-
-void station::EditKS(std::unordered_map<int, station> &ss, station &s)
-{
-    if(ss.empty())
-    {
-        std::cout<<"No station!";
-    }
-    else
-    {
-    int id;
-    std::cout << "select id station to edit\n";
-    std::cin >> id;
-    if(ID_IsPresent(ss, id) && std::cin.good())
-    {
-    //InputNum<int>(0,id);
-    std::cerr << id << "\n";
-    s.set_ID(id);
-    s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
-    std::cout << "Input number of workshops in work\n"
-              << "__> ";
-    s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
-    ss[id] = s.get_KS();
-    }
-    
-    else
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Not found \\_(._.)_/ \n";
-    }
-    }
-};
-
-void station::delKS(std::unordered_map<int, station> &ss, station &s)
-{
-    if(ss.empty())
-    {
-        std::cout<<"No station!";
-    }
-    else
-    {
-    std::cout << "select id station to delete\n";
-    int id;
-    std::cin >> id;
-    //InputNum<int>(0,id);
-    std::cerr << id << "\n";
-    if(ID_IsPresent(ss, id) && std::cin.good())
-    {
-    s = ss.at(id);
-    ss.erase(id);
-    }
-    
-    else
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Not found \\_(._.)_/ \n";
-    }
-    }
+    return in;
 }
+
+void addKS(std::unordered_map <int,station>&ss)
+{
+    station station;
+    std::cin>>station;
+    ss.insert(std::make_pair(station.get_ID(), station));
+}
+
+
+
+// void station::EditKS(std::unordered_map<int, station> &ss, station &s)
+// {
+//     if(ss.empty())
+//     {
+//         std::cout<<"No station!";
+//     }
+//     else
+//     {
+//     int id;
+//     std::cout << "select id station to edit\n";
+//     std::cin >> id;
+//     if(ID_IsPresent(ss, id) && std::cin.good())
+//     {
+//     //InputNum<int>(0,id);
+//     std::cerr << id << "\n";
+//     s.set_ID(id);
+//     s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
+//     std::cout << "Input number of workshops in work\n"
+//               << "__> ";
+//     s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
+//     ss[id] = s.get_KS();
+//     }
+    
+//     else
+//     {
+//         std::cin.clear();
+//         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//         std::cout << "Not found \\_(._.)_/ \n";
+//     }
+//     }
+// };

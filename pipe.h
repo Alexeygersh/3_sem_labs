@@ -16,16 +16,16 @@ private:
     bool remont;
 
     friend std::ostream &operator<<(std::ostream &out, pipe &p);
+    friend std::istream &operator>>(std::istream &in, pipe &p);
 
     friend std::ofstream &operator<<(std::ofstream &outf, const pipe &p);
     friend std::ifstream &operator>>(std::ifstream &fin, pipe &p);
+    
+    friend void addPipe(std::unordered_map<int, pipe> &ps);
 
 public:
+    
     pipe() : ID(newID++) {}
-
-    void InputPipe(pipe &p);
-    void EditPipe(std::unordered_map<int, pipe> &ps,pipe &p);
-    void delPipe(std::unordered_map<int, pipe> &ps,pipe &p);
 
     int get_ID() const { return ID; }
     std::string get_name_p() const { return this->name_p; }

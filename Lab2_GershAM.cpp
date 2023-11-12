@@ -2,23 +2,40 @@
 #include "pipe.h"
 #include "station.h"
 // #include <chrono>
-
+#include <sstream>
 using namespace std;
 
 void menu()
 {
-    std::cout << "\n============================================\n"
-              << "__________________Menu______________________\n\n"
-              << "select one of the following items:\n"
-              << "Add :[ 1. pipe | 2. KS ]\n"
-              << "Edit:[ 4. pipe | 5. KS ]\n"
-              << "Del :[ 6. pipe | 7. KS ]\n"
-              << "Find:[ 10. pipes | 11. KSs ]\n"
-              << "3. View all objects\n"
-              << "8. Save\n"
-              << "9. Load\n"
-              << "0. Exit\n";
-};
+    std::cout << "\n========================================================\n"
+              << "________________________Menu____________________________\n\n"
+              << "        select one of the following items:\n"
+              << "1. Add pipe                         5. View all objects\n"
+              << "2. Add KS                           6. Save\n"
+              << "3. Find(edit/del) pipes             7. Load\n"
+              << "4. Find(edit/del) stations          0. Exit\n"
+              << "__> ";
+}
+
+bool ID_Present(std::vector<int> &vector,int value)
+{
+    int k=0;
+    for(auto kv : vector)
+    {    
+        if (kv == value)
+        {
+            ++k;
+        }
+    }
+    if (k == 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 
 //================================================== input/output file ===============================================
 
@@ -71,6 +88,161 @@ void fileIn(const string &file, unordered_map<int, pipe> &ps, unordered_map<int,
     }
     fin.close();
 }
+
+//================================================== find & del or edit ===============================================
+
+vector<int> select_ids(std::vector<int> &res)
+{
+    // select ids in found pipes
+    //
+    stringstream ss;
+    string str;
+    int id;
+    vector<int> selected;
+    vector<int> notfound;
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    getline(cin, str);
+    std::cerr << str;
+    ss << str;
+    while(ss >> id)
+    {
+        if(ID_Present(res, id))
+        {
+            selected.push_back(id);
+        }
+        else
+        {
+            notfound.push_back(id);
+        }
+    }
+    cout<<"selected ids\n";
+    for(auto el : selected) cout << el << ' ';
+    cout<<"\n";
+    cout<<"not found ids\n";
+    for(auto el : notfound) cout << el << ' ';
+    cout<<"\n";
+
+    return selected;
+}
+
+void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
+{
+    for (int id : res)
+    {
+        std::cout << ps.at(id);
+    }
+    cout<<"\nids\n";
+    for (int id : res)
+    {
+        std::cout << id<<", ";
+    }
+    std::cout << "\n";
+
+    //choise select ids or exit
+
+    std::cout << "select choise:\n"
+        << "1. exit menu\n"
+        << "2. edit pipes\n"
+        << "3. del pipes\n"
+        << "__> ";
+    int choice2 = InputNum<int>(1, 3);
+    
+    pipe p;
+    vector<int> selected;
+    int id;
+
+    if (choice2 == 1)
+    {
+        return;
+    }
+    else if (choice2 == 2)
+    {
+        
+        std::cout << "select ids pipe to edit\n";
+        selected=select_ids(res);
+
+        for(int id : selected)
+        {
+            std::cout<< "\nInput mending(0/1) for "<<id<<" id pipe\n"
+            <<"__> ";
+            p=ps.at(id);
+            p.set_remont(InputNum<bool>(0,1));
+            ps[id]=p;
+        }
+    }
+    else
+    {
+        std::cout << "select ids pipe to delete\n";
+        selected=select_ids(res);
+
+        for(int id : selected)
+        {
+            ps.erase(id);
+        }
+    
+    }
+}
+
+void del_or_edit_ss(vector <int> &res, unordered_map<int, station> &ss)
+{
+    for (int id : res)
+    {
+        std::cout << ss.at(id);
+    }
+    cout<<"\nids\n";
+    for (int id : res)
+    {
+        std::cout << id<<", ";
+    }
+    std::cout << "\n";
+
+    //choise select ids or exit
+
+    std::cout << "select choise:\n"
+        << "1. exit menu\n"
+        << "2. edit stations\n"
+        << "3. del stations\n"
+        << "__> ";
+    int choice2 = InputNum<int>(1, 3);
+    
+    station s;
+    vector<int> selected;
+    int id;
+
+    if (choice2 == 1)
+    {
+        return;
+    }
+    else if (choice2 == 2)
+    {
+        
+        std::cout << "select ids station to edit\n";
+        selected=select_ids(res);
+
+        for(int id : selected)
+        {
+            std::cout<< "\nInput working cex for "<<id<<" id station\n"
+            <<"__> ";
+            s=ss.at(id);
+            s.set_workingcex(InputNum<int>(0,100000));
+            ss[id]=s;
+        }
+    }
+    else
+    {
+        std::cout << "select ids pipe to delete\n";
+        selected=select_ids(res);
+
+        for(int id : selected)
+        {
+            ps.erase(id);
+        }
+    
+    }
+}
+
+//================================================== filters ===============================================
 
 template <typename T>
 using Filter = bool (*)(const pipe &p, T param);
@@ -132,6 +304,7 @@ void findPipes(std::unordered_map<int, pipe> &ps)
               << "2. remont pipe\n"
               << "__> ";
     int choice = InputNum<int>(1, 2);
+
     if (choice == 1)
     {
         std::cout << "Input name pipe\n"
@@ -140,30 +313,33 @@ void findPipes(std::unordered_map<int, pipe> &ps)
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         getline(std::cin, name);
         std::cerr << name;
-        for (int i : find(ps, CheckByName, name))
-        {
-            std::cout << ps.at(i);
-        }
-        if (find(ps, CheckByName, name).size() == 0)
+        vector<int> res=find(ps, CheckByName, name);
+        if (res.size() == 0)
         {
             std::cout << "Not found \\_(._.)_/ \n";
+        }
+        else
+        {
+            del_or_edit_ps(res, ps); 
         }
     }
     else if (choice == 2)
     {
         std::cout << "Input remont pipe\n"
-                  << "__> ";
+        << "__> ";
         bool remont = InputNum<bool>(0, 1);
-        for (int i : find(ps, CheckByRemont, remont))
-        {
-            std::cout << ps.at(i);
-        }
-        if (find(ps, CheckByRemont, remont).size() == 0)
+        vector<int> res=find(ps, CheckByRemont, remont);
+        if (res.size() == 0)
         {
             std::cout << "Not found \\_(._.)_/ \n";
         }
+        else
+        {
+            del_or_edit_ps(res, ps);
+        }
     }
 }
+
 
 void findKSs(unordered_map<int, station> &ss)
 {
@@ -180,13 +356,14 @@ void findKSs(unordered_map<int, station> &ss)
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, name);
         std::cerr << name;
-        for (int i : find(ss, CheckByName2, name))
-        {
-            cout << ss.at(i);
-        }
-        if (find(ss, CheckByName2, name).size() == 0)
+        vector <int> res = find(ss, CheckByName2, name);
+        if (res.size() == 0)
         {
             cout << "Not found \\_(._.)_/ \n";
+        }
+        else
+        {
+            del_or_edit_ss(res, ss);
         }
     }
     else if (choice == 2)
@@ -194,16 +371,19 @@ void findKSs(unordered_map<int, station> &ss)
         cout << "Input persent not working cex KS\n"
              << "__> ";
         int persent = InputNum<int>(0, 100);
-        for (int i : find(ss, CheckByWCex, persent))
-        {
-            cout << ss.at(i);
-        }
-        if (find(ss, CheckByWCex, persent).size() == 0)
+        vector <int> res = find(ss, CheckByWCex, persent);
+        if (res.size() == 0)
         {
             cout << "Not found \\_(._.)_/ \n";
         }
+        else
+        {
+            del_or_edit_ss(res, ss);
+        }
     }
 }
+
+
 //=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=---=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=    MAIN   -=-=-=-=---=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=---=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -220,91 +400,62 @@ int main()
     while (1)
     {
         menu();
-        switch (InputNum<int>(0, 11))
+        switch (InputNum<int>(0, 7))
         {
-        case (1):
-        {
-            // system("CLS");
-            pipe p;
-            p.InputPipe(p);
-            ps.insert(make_pair(p.get_ID(), p.get_Pipe()));
-            break;
-        }
-        case (2):
-        {
-            station s;
-            s.InputKS(s);
-            ss.insert(make_pair(s.get_ID(), s.get_KS()));
-            break;
-        }
-        case (3):
-        {
-            for (auto &[id, p] : ps)
-                cout << p;
-            for (auto &[id, s] : ss)
-                cout << s;
-            break;
-        }
-        case (4):
-        {
-            pipe p;
-            p.EditPipe(ps,p);
-            break;
-        }
-        case (5):
-        {
-            station s;
-            s.EditKS(ss,s);
-            break;
-        }
-        case (6):
-        {
-            pipe p;
-            p.delPipe(ps,p);
-            break;
-        }
-        case (7):
-        {
-            station s;
-            s.delKS(ss,s);
-            break;
-        }
-        case (8):
-        {
-            string file;
-            cout << "Input name file like 'something.txt'\n"
-                 << "__> ";
-            cin >> file;
-            fileOut(file, ps, ss);
-            break;
-        }
-        case (9):
-        {
-            string file;
-            cout << "Input name file like 'something.txt'\n"
-                 << "__> ";
-            cin >> file;
-            fileIn(file, ps, ss);
-            break;
-        }
-        case (10):
-        {
-            findPipes(ps);
-            break;
-        }
-        case (11):
-        {
-            findKSs(ss);
-            break;
-        }
-        case (0):
-        {
-            exit(0);
-            break;
-        }
-        default:
-            cout << "Wrong action\n";
-            return 0;
+            case (1):
+            {
+                addPipe(ps);
+                break;
+            }
+            case (2):
+            {
+                addKS(ss);
+                break;
+            }
+            case (3):
+            {
+                findPipes(ps);
+                break;
+            }
+            case (4):
+            {
+                findKSs(ss);
+                break;
+            }
+            case (5):
+            {
+                for (auto &[id, p] : ps)
+                    cout << p;
+                for (auto &[id, s] : ss)
+                    cout << s;
+                break;
+            }
+            case (6):
+            {
+                string file;
+                cout<< "Input name file like 'something.txt'\n"
+                    << "__> ";
+                cin >> file;
+                fileOut(file, ps, ss);
+                break;
+            }
+            case (7):
+            {
+                string file;
+                cout<< "Input name file like 'something.txt'\n"
+                    << "__> ";
+                cin >> file;
+                fileIn(file, ps, ss);
+                break;
+            }
+            case (0):
+            {
+                exit(0);
+                break;
+            }
+            default:
+                cout << "Wrong action\n";
+                return 0;
         };
     }
 }

@@ -15,16 +15,15 @@ private:
     double k;
 
     friend std::ostream &operator<<(std::ostream &out, const station &s);
+    friend std::istream &operator>>(std::istream &in, station &s);
 
     friend std::ofstream &operator<<(std::ofstream &outf, const station &s);
     friend std::ifstream &operator>>(std::ifstream &fin, station &s);
 
+    friend void addKS(std::unordered_map<int, station> &ss);
+
 public:
     station() : ID(newID++) {}
-
-    void InputKS(station &s);
-    void EditKS(std::unordered_map<int, station> &ss, station &s);
-    void delKS(std::unordered_map<int, station> &ss, station &s);
 
     int get_ID() const { return ID; }
     std::string get_name_s() const { return this->name_s; }
