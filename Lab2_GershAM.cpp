@@ -17,7 +17,7 @@ void menu()
               << "__> ";
 }
 
-bool ID_Present(std::vector<int> &vector,int value)
+bool ID_is_Present(std::vector<int> &vector,int value)
 {
     int k=0;
     for(auto kv : vector)
@@ -91,15 +91,15 @@ void fileIn(const string &file, unordered_map<int, pipe> &ps, unordered_map<int,
 
 //================================================== find & del or edit ===============================================
 
-vector<int> select_ids(std::vector<int> &res)
+vector<int> select_ids(std::vector<int> &found_ids)
 {
     // select ids in found pipes
     //
     stringstream ss;
     string str;
     int id;
-    vector<int> selected;
-    vector<int> notfound;
+    vector<int> selected_ids;
+    vector<int> notfound_ids;
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(cin, str);
@@ -107,33 +107,33 @@ vector<int> select_ids(std::vector<int> &res)
     ss << str;
     while(ss >> id)
     {
-        if(ID_Present(res, id))
+        if(ID_is_Present(found_ids, id))
         {
-            selected.push_back(id);
+            selected_ids.push_back(id);
         }
         else
         {
-            notfound.push_back(id);
+            notfound_ids.push_back(id);
         }
     }
     cout<<"selected ids\n";
-    for(auto el : selected) cout << el << ' ';
+    for(auto el : selected_ids) cout << el << ' ';
     cout<<"\n";
     cout<<"not found ids\n";
-    for(auto el : notfound) cout << el << ' ';
+    for(auto el : notfound_ids) cout << el << ' ';
     cout<<"\n";
 
-    return selected;
+    return selected_ids;
 }
 
-void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
+void del_or_edit_ps(vector <int> &found_ids, unordered_map<int, pipe> &ps)
 {
-    for (int id : res)
+    for (int id : found_ids)
     {
         std::cout << ps.at(id);
     }
     cout<<"\nids\n";
-    for (int id : res)
+    for (int id : found_ids)
     {
         std::cout << id<<", ";
     }
@@ -149,7 +149,7 @@ void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
     int choice2 = InputNum<int>(1, 3);
     
     pipe p;
-    vector<int> selected;
+    vector<int> selected_ids;
     int id;
 
     if (choice2 == 1)
@@ -160,9 +160,9 @@ void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
     {
         
         std::cout << "select ids pipe to edit\n";
-        selected=select_ids(res);
+        selected_ids=select_ids(found_ids);
 
-        for(int id : selected)
+        for(int id : selected_ids)
         {
             std::cout<< "\nInput mending(0/1) for "<<id<<" id pipe\n"
             <<"__> ";
@@ -174,9 +174,9 @@ void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
     else
     {
         std::cout << "select ids pipe to delete\n";
-        selected=select_ids(res);
+        selected_ids=select_ids(found_ids);
 
-        for(int id : selected)
+        for(int id : selected_ids)
         {
             ps.erase(id);
         }
@@ -184,14 +184,14 @@ void del_or_edit_ps(vector <int> &res, unordered_map<int, pipe> &ps)
     }
 }
 
-void del_or_edit_ss(vector <int> &res, unordered_map<int, station> &ss)
+void del_or_edit_ss(vector <int> &found_ids, unordered_map<int, station> &ss)
 {
-    for (int id : res)
+    for (int id : found_ids)
     {
         std::cout << ss.at(id);
     }
     cout<<"\nids\n";
-    for (int id : res)
+    for (int id : found_ids)
     {
         std::cout << id<<", ";
     }
@@ -207,7 +207,7 @@ void del_or_edit_ss(vector <int> &res, unordered_map<int, station> &ss)
     int choice2 = InputNum<int>(1, 3);
     
     station s;
-    vector<int> selected;
+    vector<int> selected_ids;
     int id;
 
     if (choice2 == 1)
@@ -218,9 +218,9 @@ void del_or_edit_ss(vector <int> &res, unordered_map<int, station> &ss)
     {
         
         std::cout << "select ids station to edit\n";
-        selected=select_ids(res);
+        selected_ids=select_ids(found_ids);
 
-        for(int id : selected)
+        for(int id : selected_ids)
         {
             std::cout<< "\nInput working cex for "<<id<<" id station\n"
             <<"__> ";
@@ -232,11 +232,11 @@ void del_or_edit_ss(vector <int> &res, unordered_map<int, station> &ss)
     else
     {
         std::cout << "select ids pipe to delete\n";
-        selected=select_ids(res);
+        selected_ids=select_ids(found_ids);
 
-        for(int id : selected)
+        for(int id : selected_ids)
         {
-            ps.erase(id);
+            ss.erase(id);
         }
     
     }
@@ -276,25 +276,25 @@ bool CheckByWCex(const station &s, int param)
 template <typename T>
 vector<int> find(unordered_map<int, pipe> &ps, Filter<T> f, T param)
 {
-    vector<int> res;
+    vector<int> found_ids;
     for (auto &[id, p] : ps)
     {
         if (f(p, param))
-            res.push_back(id);
+            found_ids.push_back(id);
     }
-    return res;
+    return found_ids;
 }
 
 template <typename S>
 vector<int> find(unordered_map<int, station> &ss, Filter2<S> f, S param)
 {
-    vector<int> res;
+    vector<int> found_ids;
     for (auto &[id, s] : ss)
     {
         if (f(s, param))
-            res.push_back(id);
+            found_ids.push_back(id);
     }
-    return res;
+    return found_ids;
 }
 
 void findPipes(std::unordered_map<int, pipe> &ps)
@@ -313,14 +313,14 @@ void findPipes(std::unordered_map<int, pipe> &ps)
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         getline(std::cin, name);
         std::cerr << name;
-        vector<int> res=find(ps, CheckByName, name);
-        if (res.size() == 0)
+        vector<int> found_ids=find(ps, CheckByName, name);
+        if (found_ids.size() == 0)
         {
             std::cout << "Not found \\_(._.)_/ \n";
         }
         else
         {
-            del_or_edit_ps(res, ps); 
+            del_or_edit_ps(found_ids, ps); 
         }
     }
     else if (choice == 2)
@@ -328,14 +328,14 @@ void findPipes(std::unordered_map<int, pipe> &ps)
         std::cout << "Input remont pipe\n"
         << "__> ";
         bool remont = InputNum<bool>(0, 1);
-        vector<int> res=find(ps, CheckByRemont, remont);
-        if (res.size() == 0)
+        vector<int> found_ids=find(ps, CheckByRemont, remont);
+        if (found_ids.size() == 0)
         {
             std::cout << "Not found \\_(._.)_/ \n";
         }
         else
         {
-            del_or_edit_ps(res, ps);
+            del_or_edit_ps(found_ids, ps);
         }
     }
 }
@@ -356,14 +356,14 @@ void findKSs(unordered_map<int, station> &ss)
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, name);
         std::cerr << name;
-        vector <int> res = find(ss, CheckByName2, name);
-        if (res.size() == 0)
+        vector <int> found_ids = find(ss, CheckByName2, name);
+        if (found_ids.size() == 0)
         {
             cout << "Not found \\_(._.)_/ \n";
         }
         else
         {
-            del_or_edit_ss(res, ss);
+            del_or_edit_ss(found_ids, ss);
         }
     }
     else if (choice == 2)
@@ -371,14 +371,14 @@ void findKSs(unordered_map<int, station> &ss)
         cout << "Input persent not working cex KS\n"
              << "__> ";
         int persent = InputNum<int>(0, 100);
-        vector <int> res = find(ss, CheckByWCex, persent);
-        if (res.size() == 0)
+        vector <int> found_ids = find(ss, CheckByWCex, persent);
+        if (found_ids.size() == 0)
         {
             cout << "Not found \\_(._.)_/ \n";
         }
         else
         {
-            del_or_edit_ss(res, ss);
+            del_or_edit_ss(found_ids, ss);
         }
     }
 }

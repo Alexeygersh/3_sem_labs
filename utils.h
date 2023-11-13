@@ -41,23 +41,3 @@ T InputNum(T start, T end)
     return param;
 };
 
-template <typename T>
-bool ID_IsPresent(std::unordered_map<int, T> &unordered_map,int value)
-{
-    int k=0;
-for(auto kv : unordered_map)
-{    
-    if (kv.first == value)
-    {
-        ++k;
-    }
-}
-if (k == 0)
-{
-    return false;
-}
-else
-{
-    return true;
-}
-}
