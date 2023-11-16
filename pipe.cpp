@@ -1,16 +1,9 @@
 #include "pipe.h"
 #include "utils.h"
-#include <iostream>
-#include <limits>
-#include <string>
-#include <fstream>
-#include <unordered_map>
-#include <vector>
-
 
 int pipe::newID = 1;
 
-std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
+std::ofstream &operator<<(std::ofstream &outf,const pipe &p)
 {
     outf << "p\n"
          << p.get_ID() << "\n"
@@ -36,7 +29,7 @@ std::ifstream &operator>>(std::ifstream &fin, pipe &p)
 
     return fin;
 }
-std::ostream &operator<<(std::ostream &out, pipe &p)
+std::ostream &operator<<(std::ostream &out,const pipe &p)
 {
     out << "ID " << p.get_ID() << "\n"
         << "Name pipe:  " << p.get_name_p() << "\n"
@@ -69,18 +62,4 @@ std::istream &operator>>(std::istream &in, pipe &p)
 
     return in;
 }
-
-void addPipe(std::unordered_map <int,pipe>&ps)
-{
-    pipe pipe;
-    std::cin>>pipe;
-    ps.insert(std::make_pair(pipe.get_ID(), pipe));
-}
-
-
-// void EditPipe(bool new_status)
-// {
-//     pipe::set_remont(new_status);
-// };
-
 

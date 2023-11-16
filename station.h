@@ -9,6 +9,7 @@ class station
 private:
     int ID;
     static int newID;
+
     std::string name_s;
     int cex;
     int workingcex;
@@ -19,8 +20,6 @@ private:
 
     friend std::ofstream &operator<<(std::ofstream &outf, const station &s);
     friend std::ifstream &operator>>(std::ifstream &fin, station &s);
-
-    friend void addKS(std::unordered_map<int, station> &ss);
 
 public:
     station() : ID(newID++) {}

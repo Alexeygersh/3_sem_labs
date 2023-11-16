@@ -15,16 +15,13 @@ private:
     int d;
     bool remont;
 
-    friend std::ostream &operator<<(std::ostream &out, pipe &p);
+    friend std::ostream &operator<<(std::ostream &out,const pipe &p);
     friend std::istream &operator>>(std::istream &in, pipe &p);
 
-    friend std::ofstream &operator<<(std::ofstream &outf, const pipe &p);
+    friend std::ofstream &operator<<(std::ofstream &outf,const pipe &p);
     friend std::ifstream &operator>>(std::ifstream &fin, pipe &p);
-    
-    friend void addPipe(std::unordered_map<int, pipe> &ps);
 
 public:
-    
     pipe() : ID(newID++) {}
 
     int get_ID() const { return ID; }

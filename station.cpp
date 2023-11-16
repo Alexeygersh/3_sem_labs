@@ -1,10 +1,5 @@
 #include "station.h"
 #include "utils.h"
-#include <iostream>
-#include <limits>
-#include <string>
-#include <fstream>
-#include <unordered_map>
 
 int station::newID = 1;
 
@@ -81,44 +76,3 @@ std::istream &operator>>(std::istream &in, station &s)
 
     return in;
 }
-
-void addKS(std::unordered_map <int,station>&ss)
-{
-    station station;
-    std::cin>>station;
-    ss.insert(std::make_pair(station.get_ID(), station));
-}
-
-
-
-// void station::EditKS(std::unordered_map<int, station> &ss, station &s)
-// {
-//     if(ss.empty())
-//     {
-//         std::cout<<"No station!";
-//     }
-//     else
-//     {
-//     int id;
-//     std::cout << "select id station to edit\n";
-//     std::cin >> id;
-//     if(ID_IsPresent(ss, id) && std::cin.good())
-//     {
-//     //InputNum<int>(0,id);
-//     std::cerr << id << "\n";
-//     s.set_ID(id);
-//     s.set_KS(ss.at(id).get_name_s(), ss.at(id).get_cex(), ss.at(id).get_workingcex(), ss.at(id).get_k());
-//     std::cout << "Input number of workshops in work\n"
-//               << "__> ";
-//     s.set_workingcex(inputWcex(s.get_cex(), s.get_workingcex()));
-//     ss[id] = s.get_KS();
-//     }
-    
-//     else
-//     {
-//         std::cin.clear();
-//         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//         std::cout << "Not found \\_(._.)_/ \n";
-//     }
-//     }
-// };
