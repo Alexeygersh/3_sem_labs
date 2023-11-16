@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 int pipe::newID = 1;
 
 std::ofstream &operator<<(std::ofstream &outf, const pipe &p)
@@ -26,7 +27,10 @@ std::ifstream &operator>>(std::ifstream &fin, pipe &p)
     double len;
     int d;
     bool remont;
-    fin >> id >> name >> len >> d >> remont;
+    fin >> id;
+    fin >> std::ws;
+    getline(fin, name);
+    fin >> len >> d >> remont;
     p.set_ID(id);
     p.set_Pipe(name, len, d, remont);
 

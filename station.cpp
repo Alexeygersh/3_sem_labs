@@ -6,7 +6,7 @@
 #include <fstream>
 #include <unordered_map>
 
-int station::newID = 0;
+int station::newID = 1;
 
 std::ofstream &operator<<(std::ofstream &outf, const station &s)
 {
@@ -28,7 +28,10 @@ std::ifstream &operator>>(std::ifstream &fin, station &s)
     int cexx;
     int wcex;
     double kk;
-    fin >> id >> name >> cexx >> wcex >> kk;
+    fin >> id;
+    fin >> std::ws;
+    getline(fin, name);
+    fin>> cexx >> wcex >> kk;
     s.set_ID(id);
     s.set_KS(name, cexx, wcex, kk);
     return fin;
