@@ -35,16 +35,16 @@ public:
         return *this;
     }
 
-    void set_Pipe(std::string name_p, double len, int d, bool remont)
+    void set_Pipe(std::string name_p_, double len_, int d_, bool remont_)
     {
-        this->name_p = name_p;
-        this->len = len;
-        this->d = d;
-        this->remont = remont;
+        this->name_p = name_p_;
+        this->len = len_;
+        this->d = d_;
+        this->remont = remont_;
     }
-    void set_remont(bool remont) { this->remont = remont; }
-    void set_ID(int ID) { this->ID = ID; }
+    void set_remont(bool remont_) { this->remont = remont_; }
+    void set_ID(int ID_) { this->ID = ID_; }
     static int get_newID() { return newID; }
 
-    void set_newID(int newID) { this->newID = newID; }
+    void set_newID(int newID_) { this->newID = newID_; }
 };

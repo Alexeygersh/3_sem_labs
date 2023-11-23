@@ -13,7 +13,7 @@ std::ofstream &operator<<(std::ofstream &outf, const station &s)
          << s.get_k() << "\n";
 
     return outf;
-};
+}
 
 std::ifstream &operator>>(std::ifstream &fin, station &s)
 {

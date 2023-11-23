@@ -6,6 +6,11 @@
 
 #include <sstream>
 
+#include <stack>
+#include <iterator>
+#include <algorithm>
+#include <bits/stdc++.h>
+
 void GTS::addPipe()
 {
     pipe pipe;
@@ -30,6 +35,7 @@ void GTS::out_data()
 
 
 
+
 bool ID_is_Present(std::unordered_set<int> &unordered_set,int value)
 {
     int k=0;
@@ -46,30 +52,39 @@ bool ID_is_Present(std::unordered_set<int> &unordered_set,int value)
 
 //================================================== find & del or edit ===============================================
 
+
+
 std::unordered_set<int> select_ids(std::unordered_set<int> &found_ids)
 {
     // select ids in found pipes
     //
     std::stringstream ss;
     std::string str;
-    int id;
+    
     std::unordered_set<int> selected_ids;
     std::unordered_set<int> notfound_ids;
 
+    int id;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin, str);
     std::cerr << str;
     ss << str;
-    while(ss >> id)
+    while(!ss.eof())
     {
-        if(ID_is_Present(found_ids, id))
+        char c=(char) ss.peek();
+        if (isdigit(c))
         {
-            selected_ids.insert(id);
+            ss>>id;
+            if(ID_is_Present(found_ids, id))
+                selected_ids.insert(id);
+            else
+                notfound_ids.insert(id);
         }
         else
         {
-            notfound_ids.insert(id);
+            ss.ignore();
         }
+
     }
     std::cout<<"selected ids\n";
     for(auto el : selected_ids) std::cout << el << ' ';
@@ -106,7 +121,6 @@ void del_or_edit_ps(std::unordered_set <int> &found_ids, std::unordered_map<int,
     //pipe& p = p;
 
     std::unordered_set<int> selected_ids;
-    int id;
 
     if (choice2 == 1)
     {
@@ -163,7 +177,6 @@ void del_or_edit_ss(std::unordered_set <int> &found_ids, std::unordered_map<int,
     
     //station& s = s;
     std::unordered_set<int> selected_ids;
-    int id;
 
     if (choice2 == 1)
     {
@@ -218,21 +231,10 @@ bool CheckByRemont(const pipe &p, bool param)
         return false;
 }
 
-template <typename S>
-using Filter2 = bool (*)(const station &s, S param);
-bool CheckByName2(const station &s, std::string param)
+bool CheckByD(const pipe &p, int param)
 {
-    if ((s.get_name_s()).find(param) == std::string::npos)
-        return false;
-    else
+    if (p.get_d() == param)
         return true;
-}
-bool CheckByWCex(const station &s, int param)
-{
-    if ( ((int)(s.get_workingcex() / s.get_cex())) * 100 <= param)
-    {
-        return true;
-    }
     else
         return false;
 }
@@ -244,18 +246,6 @@ std::unordered_set<int> find(std::unordered_map<int, pipe> &ps, Filter<T> f, T p
     for (auto &[id, p] : ps)
     {
         if (f(p, param))
-            found_ids.insert(id);
-    }
-    return found_ids;
-}
-
-template <typename S>
-std::unordered_set<int> find(std::unordered_map<int, station> &ss, Filter2<S> f, S param)
-{
-    std::unordered_set<int> found_ids;
-    for (auto &[id, s] : ss)
-    {
-        if (f(s, param))
             found_ids.insert(id);
     }
     return found_ids;
@@ -305,6 +295,39 @@ void GTS::findPipes()
 }
 
 
+
+template <typename S>
+using Filter2 = bool (*)(const station &s, S param);
+bool CheckByName2(const station &s, std::string param)
+{
+    if ((s.get_name_s()).find(param) == std::string::npos)
+        return false;
+    else
+        return true;
+}
+bool CheckByWCex(const station &s, int param)
+{
+    if ( ((int)(s.get_workingcex() / s.get_cex())) * 100 <= param)
+    {
+        return true;
+    }
+    else
+        return false;
+}
+
+template <typename S>
+std::unordered_set<int> find(std::unordered_map<int, station> &ss, Filter2<S> f, S param)
+{
+    std::unordered_set<int> found_ids;
+    for (auto &[id, s] : ss)
+    {
+        if (f(s, param))
+            found_ids.insert(id);
+    }
+    return found_ids;
+}
+
+
 void GTS::findKSs()
 {
     std::cout << "select variable to find:\n"
@@ -347,8 +370,66 @@ void GTS::findKSs()
     }
 }
 
+void GTS::find_link()
+{
+    path path;
+    station&s=s;
+
+    std::cout << "Input id first station\n" << "__> ";
+    path.id_in=InputNum(1,s.get_newID());
+
+    std::cout << "Input id second station\n" << "__> ";
+    path.id_out=InputNum(1,s.get_newID());
+
+    std::cout << "Input diameter pipe\n" << "__> "; 
+    int dia;
+    dia=InputNum(500,1400);//500 700 1000 1400
+
+    std::unordered_set<int> found_ids;
+    found_ids=find(ps, CheckByD, dia);
+
+    if (found_ids.size() == 0)
+    {
+        std::cout<<"Pipe not found\nPlease create it\n";
+        GTS::addPipe();
+    }
+    else
+    {
+        std::cout<<"found ids:  \n";
+        for(auto el : found_ids) std::cout << el << ' ';
+        std::cout<<"\n";
+
+        path.id_link = *(found_ids.begin());
+
+        vector_of_path.push_back(path);
+
+        count_nodes=count_nodes+2;
+        id_used_edges.insert(path.id_link);
+
+        //count nodes в файл
+
+        std::cout<<"Your path is:\n"<<"KS:(id:"<<path.id_in<<")  ---Pipe:(id:"<<path.id_link<<")--->  KS:(id:"<<path.id_out<<")\n";
+
+    }
+}
+
 
 //================================================== input/output file ===============================================
+
+std::ofstream &operator<<(std::ofstream &outf, const path &path)
+{
+    outf << "-\n"
+         << path.id_in << "\n"
+         << path.id_out << "\n"
+         << path.id_link << "\n";
+    return outf;
+}
+std::ifstream &operator>>(std::ifstream &fin, path &path)
+{
+    fin >> path.id_in >> path.id_out >> path.id_link;
+    return fin;
+}
+
 
 void GTS::fileOut()
 {
@@ -367,10 +448,22 @@ void GTS::fileOut()
         }
         for (auto &[id, s] : ss)
         {
-
             // if (station::s.cex > 0)
             outf << s;
         }
+
+        for (auto el : vector_of_path)
+        {
+            outf << el;
+        }
+
+        for (auto el : id_used_edges)
+        {
+            outf <<"e\n"<< el;
+        }
+
+        outf <<"n\n"<< count_nodes;
+
     }
 }
 
@@ -385,7 +478,9 @@ void GTS::fileIn()
     {
         pipe p;
         station s;
-        int a, b;
+        path path;
+        int id_node, id_edge, a, b;
+
         fin >> a >> b;
         p.set_newID(a);
         s.set_newID(b);
@@ -401,11 +496,91 @@ void GTS::fileIn()
                 fin >> s;
                 ss.insert(std::make_pair(s.get_ID(), s));
             }
+            if (flag == "-")
+            {    
+                fin >> path;
+                vector_of_path.push_back(path);
+            }
+            if (flag == "e")
+            { 
+                fin >> id_edge;
+                id_used_edges.insert(id_edge);
+            }
+            if (flag == "n")
+            {   
+                fin >> count_nodes;
+            }
+
         }
     }
     fin.close();
 }
 
+
+void printGraph(Graph const &graph, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (Pair v: graph.adjList[i])
+        {
+            std::cout << "(" << i << ", " << v.first << ", " << v.second << ") ";
+        }
+        std::cout << "\n";
+    }
+}
+
+#include <queue>
+
+void topsort(Graph const &graph, int n)
+{
+    std::vector<int> inDegree(n, 0);
+    for (int i = 0; i < n; i++)
+    {
+        for (Pair v: graph.adjList[i])
+        {
+            inDegree[v.first]++;
+        }
+    }
+    std::queue <int> q;
+    for (int i = 0; i < n; i++)
+    {
+        if (inDegree[i] == 0)
+        {
+            q.push(i);
+        }
+    }
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+        std::cout << u << " ";
+        for (Pair v: graph.adjList[u])
+        {
+            inDegree[v.first]--;
+            if (inDegree[v.first] == 0)
+            {
+                q.push(v.first);
+            }
+        }
+    }
+
+}
+
+void GTS::Print_and_Topsort()
+{
+    //int n = 8;
+    std::vector<path> paths;
+    for (auto el : vector_of_path)  paths.push_back(el);
+
+    // построить Graph
+    Graph graph(paths, count_nodes);
+
+    printGraph(graph, count_nodes);
+
+    // Топологическая сортировка
+    topsort(graph, count_nodes);
+
+}
 
 
 

@@ -7,8 +7,8 @@
 
 class redirect_output_wrapper
 {
-    std::ostream &stream;
     std::streambuf *const old_buf;
+    std::ostream &stream;
 
 public:
     redirect_output_wrapper(std::ostream &src)
@@ -39,5 +39,5 @@ T InputNum(T start, T end)
     }
     std::cerr << param << "\n";
     return param;
-};
+}
 

@@ -8,10 +8,11 @@ void menu()
     std::cout   << "\n========================================================\n"
                 << "________________________Menu____________________________\n\n"
                 << "        select one of the following items:\n"
-                << "1. Add pipe                         5. View all objects\n"
-                << "2. Add KS                           6. Save\n"
-                << "3. Find(edit/del) pipes             7. Load\n"
-                << "4. Find(edit/del) stations          0. Exit\n"
+                << "1. Add pipe                         6. Save\n"
+                << "2. Add KS                           7. Load\n"
+                << "3. Find(edit/del) pipes             8. Link to GTS\n"
+                << "4. Find(edit/del) stations          9. Print Graph && Topologic sort\n"
+                << "5. View all objects                 0. Exit\n"
                 << "__> ";
 }
 
@@ -29,7 +30,7 @@ int main()
     while (true)
     {
         menu();
-        switch (InputNum<int>(0, 7))
+        switch (InputNum<int>(0, 9))
         {
             case (1):
             {
@@ -52,7 +53,7 @@ int main()
                 break;
             }
             case (5):
-            {
+            {   
                 gts.out_data();
                 break;
             }
@@ -65,6 +66,16 @@ int main()
             {
                 
                 gts.fileIn();
+                break;
+            }
+            case (8):
+            {
+                gts.find_link();
+                break;
+            }
+            case(9):
+            {
+                gts.Print_and_Topsort();
                 break;
             }
             case (0):

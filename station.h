@@ -32,16 +32,16 @@ public:
 
     station get_KS() { return *this; }
 
-    void set_KS(std::string name_s, int cex, int workingcex, double k)
+    void set_KS(std::string name_s_, int cex_, int workingcex_, double k_)
     {
-        this->name_s = name_s;
-        this->cex = cex;
-        this->workingcex = workingcex;
-        this->k = k;
+        this->name_s = name_s_;
+        this->cex = cex_;
+        this->workingcex = workingcex_;
+        this->k = k_;
     }
-    void set_workingcex(int workingcex) { this->workingcex = workingcex; }
-    void set_ID(int ID) { this->ID = ID; }
+    void set_workingcex(int workingcex_) { this->workingcex = workingcex_; }
+    void set_ID(int ID_) { this->ID = ID_; }
     static int get_newID() { return newID; }
 
-    void set_newID(int newID) { this->newID = newID; }
+    void set_newID(int newID_) { this->newID = newID_; }
 };
