@@ -11,7 +11,7 @@ void menu()
                 << "1. Add pipe                         6. Save\n"
                 << "2. Add KS                           7. Load\n"
                 << "3. Find(edit/del) pipes             8. Link to GTS\n"
-                << "4. Find(edit/del) stations          9. Print Graph && Topologic sort\n"
+                << "4. Find(edit/del) stations          9. Graph && Topologic sort\n"
                 << "5. View all objects                 0. Exit\n"
                 << "__> ";
 }
@@ -64,24 +64,22 @@ int main()
             }
             case (7):
             {
-                
                 gts.fileIn();
                 break;
             }
             case (8):
             {
-                gts.find_link();
+                gts.link();
                 break;
             }
             case(9):
             {
-                gts.Print_and_Topsort();
+                gts.Graph_and_Topsort();
                 break;
             }
             case (0):
             {
                 exit(0);
-                break;
             }
             default:
                 std::cout << "Wrong action\n";
