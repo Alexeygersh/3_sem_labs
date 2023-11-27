@@ -641,63 +641,20 @@ void printGraph(Graph const &graph, int n)
 }
 
 
-
-void topsort(Graph const &graph, int n)
-{
-    std::vector<int> inDegree(n, 0);
-    for (int i = 0; i < n; i++)
-    {
-        for (Pair v: graph.adjList[i])
-        {
-            inDegree[v.first]++;
-        }
-    }
-
-    std::queue <int> q;
-    for (int i = 0; i < n; i++)
-    {
-        if (inDegree[i] == 0)
-        {
-            q.push(i);
-        }
-    }
-
-    while (!q.empty())
-    {
-        int u = q.front();
-        q.pop();
-
-        std::cout << u+1 << " ";
-
-        for (Pair v: graph.adjList[u])
-        {
-            inDegree[v.first]--;
-            if (inDegree[v.first] == 0)
-            {
-                q.push(v.first);
-            }
-        }
-    }
-
-}
-
-
-
-
 void dfs(std::vector<std::vector <int>> &graph, int v, std::vector<int> &visited, std::vector <int> &order)
 {
     visited[v] = 1;
     for (int to: graph[v])
-        if(visited[to])
-            dfs(graph, to, visited,order);
+        if(!visited[to])
+            dfs(graph, to, visited, order);
     order.push_back(v);
 }
 
-void topol(int vertex_count,int edge_count,Graph const &graph)
+void topologicalSort(int vertex_count,int edge_count,Graph const &graph)
 {
     std::vector<std::vector <int>> gh(vertex_count);
 
-
+    //Отсеивваем веса для удобной работы с графом
     for (int i = 0; i < edge_count; i++)
     {
         for (Pair v: graph.adjList[i])
@@ -713,31 +670,18 @@ void topol(int vertex_count,int edge_count,Graph const &graph)
     std::vector<int> visited(vertex_count, 0);
     std::vector<int> order;
     for (int i = 0; i < vertex_count; i++)
-        if (!visited[i])
+    {
+        if (!visited[i]) {
             dfs(gh, i, visited, order);
+
+        }
+    }
     reverse(order.begin(), order.end());
 
     for (int i:order)
         std::cout<<i+1<<" ";
 
 }
-//
-//void create_graph()
-//{
-//    edge_count = id_used_edges.size();
-//
-//    std::vector<std::vector <int>> graph(vertex_count);
-//
-//    for (int i = 0; i < edge_count; i++)
-//    {
-//        int from, to;
-//        std::cin >> from >> to;
-//        from--;
-//        to--;
-//        graph[from].push_back(to);
-//    }
-//}
-//
 
 
 void GTS::Graph_and_Topsort()
@@ -753,7 +697,7 @@ void GTS::Graph_and_Topsort()
 
     // Топологическая сортировка
     //topsort(graph, n);
-    topol(n, edge_count, graph);
+    topologicalSort(n, edge_count, graph);
 
 }
 
