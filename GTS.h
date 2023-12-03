@@ -8,7 +8,7 @@ struct path
 {
     int id_in;
     int id_out;
-    int id_link;
+    int weight;
 
     friend std::ofstream &operator<<(std::ofstream &outf, const path &path);
     friend std::ifstream &operator>>(std::ifstream &fin, path &path);
@@ -20,9 +20,10 @@ class GTS
 private:
 	std::unordered_map<int, pipe> ps;
 	std::unordered_map<int, station> ss;
+
 	std::unordered_set<int> id_used_edges;
     std::unordered_set<int> id_used_vertexes;
-    std::vector<path> paths;
+    std::unordered_map<int,path> graph;
 
 public:
 	void addPipe();
@@ -39,37 +40,11 @@ public:
 	void link();
 	void Graph_and_Topsort();
 
+    void MaxFlow();
+    void min_path();
+    std::vector<std::vector <int>> make_graph_no_weight();
 
-    void del_or_edit_ps(std::unordered_set <int> &found_ids, std::unordered_map<int, pipe> &map);
-};
 
-
-typedef std::pair<int, int> Pair;
-
-class Graph
-{
-public:
-    std::vector<std::vector<Pair>> adjList; // список смежности
-
-    Graph(std::vector<path> const &paths, int n) //Создать граф
-    {
-        //adjList.clear();
-        adjList.resize(n); // n элементов path ()-->()
-
-        // добавляем paths
-        for (auto &path : paths)
-        {
-            int src = path.id_in;
-            int dest = path.id_out;
-            int weight = path.id_link;
-
-            adjList[src].emplace_back(dest, weight);
-
-        }
-    }
-
-//    void addEdge(int src, int dest, int weight)
-//    {
-//        adjList[src].emplace_back(dest, weight);
-//    }
+    void del_or_edit_ps(std::unordered_set <int> &found_ids);
+    void del_or_edit_ss(std::unordered_set <int> &found_ids);
 };

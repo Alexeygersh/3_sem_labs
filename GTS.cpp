@@ -94,25 +94,11 @@ std::unordered_set<int> select_ids(std::unordered_set<int> &found_ids)
     return selected_ids;
 }
 
-void Remove_link(std::vector<path> & paths, int id)
-{
-    for (auto it = paths.begin(); it != paths.end(); ++it)
-    {
-        if (it->id_link == id)
-        {
-            paths.erase(it);
-            break;
-        }
-    }
-}
-
-
-
-void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids, std::unordered_map<int, pipe> &pipes)
+void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
 {
     for (int id : found_ids)
     {
-        std::cout << pipes.at(id);
+        std::cout << ps.at(id);
     }
     std::cout<<"\nids\n";
     for (int id : found_ids)
@@ -149,7 +135,7 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids, std::unordered_map
 
         for(int id : selected_ids)
         {
-            pipes.at(id).set_remont(rem);
+            ps.at(id).set_remont(rem);
         }
     }
     else
@@ -174,61 +160,43 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids, std::unordered_map
             for (int i : used) std::cout<<i<<" ";
             std::cout<<"  used in GTS !\n";
             std::cout<<"Do you rly want to delete pipe(s)?\n(Y=1/n=0)\n"<<"__>";
-            int a= InputNum(0,1);
-            if (a)
+            int a = InputNum(0,1);
+            if (a) //удалить
             {
                 for(int id : selected_ids)
-                    pipes.erase(id);
+                    ps.erase(id);
+
                 // удалить связ
                 for(int id : used)
                 {
-                    id_used_edges.erase(id);
-
-                    for (auto it = paths.begin(); it != paths.end();)
-                    {
-                        if (it->id_link == id)
-                        {
-                            it = paths.erase(it);
-                        }
-                        else
-                        {
-                            it++;
-                        }
-                    }
-
-
-                    for (auto el : id_used_edges) std::cout<<el<<" ";
-                    std::cout<<"\n";
-                    for (auto el : paths) std::cout<<el.id_link<<" ";
-                    std::cout<<"\n";
-
-                    //  if (path.id_link == id)
-                    //  {
-                    //      Remove(vector_of_path, id);
-                    //  }
-
+                    id_used_edges.erase(id_used_edges.find(id));
+                    graph.erase(id);
 
                 }
+
+                std::cout<<"\n";
+                for(auto i:id_used_edges)
+                    std::cout<<i<<" ";
+                std::cout<<"\n";
+                for (auto i:id_used_vertexes)
+                    std::cout<<i<<" ";
+
                 // пересоздать граф
                 GTS::Graph_and_Topsort();
-
             }
-            else
-            {
+            else //не удалять
                 return;
-            }
 
         }
-        else
+        else //не используется в графе=удалить просто
         {
             for(int id : selected_ids)
-                pipes.erase(id);
+                ps.erase(id);
         }
-    
     }
 }
 
-void del_or_edit_ss(std::unordered_set <int> &found_ids, std::unordered_map<int, station> &ss)
+void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
 {
     for (int id : found_ids)
     {
@@ -266,23 +234,97 @@ void del_or_edit_ss(std::unordered_set <int> &found_ids, std::unordered_map<int,
             <<"__> ";
         int workcex=InputNum<int>(0,100000);
 
-
         for(int id : selected_ids)
         {
-            
             ss.at(id).set_workingcex(workcex);
         }
     }
     else
     {
-        std::cout << "select ids pipe to delete\n";
+        std::cout << "select ids station to delete\n";
         selected_ids=select_ids(found_ids);
 
-        for(int id : selected_ids)
+
+        std::unordered_set<int> used(selected_ids.size()+id_used_vertexes.size());
+        for (int i : selected_ids)
         {
-            ss.erase(id);
+            if (id_used_vertexes.count(i))
+            {
+                used.insert(i);
+            }
         }
-    
+
+        //проверка на то что станция состоит в графе
+        if (!used.empty())
+        {
+            std::cout<<"Celected station(s) with id(s):  ";
+            for (auto i : used) std::cout<<i<<" ";
+            std::cout<<"  used in GTS !\n";
+            //std::cout<<"Previously you should delete pipes connected with that station(s)\n";
+            std::cout<<"Do you rly want to delete station(s)?\n(Y=1/n=0)\n"<<"__>";
+            int a = InputNum(0,1);
+            if (a) //удалить
+            {
+                for(auto id : selected_ids)
+                    ss.erase(id);
+
+                // удалить связ
+                std::vector<int> arrKeys;
+                for(int id : used)
+                {
+                    id_used_vertexes.erase(id_used_vertexes.find(id));
+
+                    for (auto& element : graph)
+                        if (element.second.id_in == id || element.second.id_out == id)
+                        {
+                            arrKeys.push_back(element.first);
+                            //удалить трубы которые соединяются с этой станцией из used_edges
+                            id_used_edges.erase(id_used_edges.find(element.first));
+                        }
+                }
+
+                for (auto i : arrKeys)
+                    graph.erase(i);
+
+
+
+                //убираем станции без труб из id_used_vertexes
+
+//                std::vector<int> arrKeys2;
+//                for (auto [id_pipe, path_] : graph)
+//                    for (auto i:id_used_vertexes)
+//                        if (i==path_.id_in || i==path_.id_out)
+//                        {
+//                            arrKeys2.push_back(i);
+//                            std::cout<<i<<" ";
+//                        }
+//                for (auto i : id_used_vertexes)
+//                    if (!(std::find(arrKeys2.begin(), arrKeys2.end(), i) == arrKeys2.end()))
+//                            id_used_vertexes.erase(id_used_vertexes.find(i));
+
+
+
+                std::cout<<"\n";
+                for(auto i:id_used_edges)
+                    std::cout<<i<<" ";
+                std::cout<<"\n";
+                for (auto i:id_used_vertexes)
+                    std::cout<<i<<" ";
+
+                // пересоздать граф
+                GTS::Graph_and_Topsort();
+
+            }
+            else //не удалять
+                return;
+
+
+        }
+        else //не используется в графе=удалить просто
+        {
+            for(int id : selected_ids)
+                ss.erase(id);
+        }
     }
 }
 
@@ -349,7 +391,7 @@ void GTS::findPipes()
         }
         else
         {
-            del_or_edit_ps(found_ids, ps); 
+            del_or_edit_ps(found_ids);
         }
     }
     else if (choice == 2)
@@ -364,7 +406,7 @@ void GTS::findPipes()
         }
         else
         {
-            del_or_edit_ps(found_ids, ps);
+            del_or_edit_ps(found_ids);
         }
     }
 }
@@ -425,7 +467,7 @@ void GTS::findKSs()
         }
         else
         {
-            del_or_edit_ss(found_ids, ss);
+            del_or_edit_ss(found_ids);
         }
     }
     else if (choice == 2)
@@ -440,14 +482,16 @@ void GTS::findKSs()
         }
         else
         {
-            del_or_edit_ss(found_ids, ss);
+            del_or_edit_ss(found_ids);
         }
     }
 }
 
 void GTS::link()
 {
-    path path{};
+    path path={};
+    path.weight=1;
+    int id_pipe=0;
 
     std::cout << "Input id first station\n" << "__> ";
     path.id_in=InputNum(1,station::get_newID());
@@ -472,7 +516,7 @@ void GTS::link()
         int id=(pipe::get_newID())-1;
 
         id_used_edges.insert(id);
-        path.id_link = id;
+        id_pipe = id;
 
         //path.id_link = *(found_ids.begin());
 
@@ -488,14 +532,14 @@ void GTS::link()
             if (!ID_is_Present(id_used_edges, el)) //если труба не используется
             {
                 id_used_edges.insert(el);
-                path.id_link = el;
+                id_pipe = el;
                 break;
             }
         }
 
 
         //Если найденная труба с данным диаметром есть, но используется
-        if (path.id_link == 0)
+        if (id_pipe == 0)
         {
             std::cout<<"All pipes with this diameter are used\nPlease create it\n";
             GTS::addPipe();
@@ -504,13 +548,15 @@ void GTS::link()
             int id=(pipe::get_newID())-1;
 
             id_used_edges.insert(id);
-            path.id_link = id;
+            id_pipe = id;
         }
     }
 
-    paths.push_back(path);/////
+    graph.insert( std::make_pair(id_pipe, path) );
 
-    std::cout<<"Your path is:\n"<<"KS:(id:"<<path.id_in<<")  ---Pipe:(id:"<<path.id_link<<")--->  KS:(id:"<<path.id_out<<")\n";
+    std::cout<<"Your path is:\n"<<"KS:(id:"<<path.id_in<<")  ---Pipe:(id:"<<id_pipe<<")--->  KS:(id:"<<path.id_out<<")\n";
+
+    Graph_and_Topsort();
 
 }
 
@@ -519,15 +565,14 @@ void GTS::link()
 
 std::ofstream &operator<<(std::ofstream &outf, const path &path)
 {
-    outf << "-\n"
-         << path.id_in << "\n"
+    outf << path.id_in << "\n"
          << path.id_out << "\n"
-         << path.id_link << "\n";
+         << path.weight << "\n";
     return outf;
 }
 std::ifstream &operator>>(std::ifstream &fin, path &path)
 {
-    fin >> path.id_in >> path.id_out >> path.id_link;
+    fin >> path.id_in >> path.id_out >> path.weight;
     return fin;
 }
 
@@ -553,20 +598,18 @@ void GTS::fileOut()
             outf << s;
         }
 
-        for (auto el : paths)
+        for (auto &[id, path] : graph)
         {
-            outf << el<<"\n";
+            outf<<"-\n";
+            outf<<id<<"\n";
+            outf << path;
         }
 
         for (auto el : id_used_edges)
-        {
             outf <<"e\n"<< el<<"\n";
-        }
 
         for (auto el : id_used_vertexes)
-        {
             outf <<"v\n"<< el<<"\n";
-        }
 
     }
     outf.close();
@@ -587,6 +630,7 @@ void GTS::fileIn()
         station s;
         path path{};
         int id_edge, id_vertex, a, b;
+        int id;
 
         fin >> a >> b;
         p.set_newID(a);
@@ -604,9 +648,10 @@ void GTS::fileIn()
                 ss.insert(std::make_pair(s.get_ID(), s));
             }
             if (flag == "-")
-            {    
+            {
+                fin >> id;
                 fin >> path;
-                paths.push_back(path);
+                graph.insert(std::make_pair(id, path));
             }
             if (flag == "e")
             {
@@ -626,20 +671,25 @@ void GTS::fileIn()
 
 
 
-
-void printGraph(Graph const &graph, int n)
+void printGraph(std::unordered_map<int,path> &graph, int n)
 {
-    std::cout << "\n(in,out,weight)\n";
-    for (int i = 0; i < n; i++)
-    {
-        for (Pair v: graph.adjList[i])
-        {
-            std::cout << "(" << i << ", " << v.first << ", " << v.second << ") ";
-        }
-        std::cout << "\n";
-    }
+    std::cout << "\nYour graph:\n";
+    for (auto [id_pipe, path_] : graph)
+        std::cout <<"(id:"<<path_.id_in<<") ---(id:"<<id_pipe<<")---> (id:"<<path_.id_out<<")\n";
+
 }
 
+
+
+bool Has_cycle(int vertex_count,int edge_count, std::vector<std::vector <int>> graph_no_weight, int v, std::vector<int> &visited)
+{
+    visited[v] = 1;
+    for (int to: graph_no_weight[v])
+        if(visited[to]==0 && Has_cycle(vertex_count, edge_count, graph_no_weight, to, visited) || visited[to]==1)
+            return true;
+    visited[v] = 2;
+    return false;
+}
 
 void dfs(std::vector<std::vector <int>> &graph, int v, std::vector<int> &visited, std::vector <int> &order)
 {
@@ -647,35 +697,20 @@ void dfs(std::vector<std::vector <int>> &graph, int v, std::vector<int> &visited
     for (int to: graph[v])
         if(!visited[to])
             dfs(graph, to, visited, order);
+//    for(int u=0; u<graph.size(); u++)
+//        if(graph[v][u]==1 && !visited[u])
+//            dfs(graph, u, visited, order);
     order.push_back(v);
 }
 
-void topologicalSort(int vertex_count,int edge_count,Graph const &graph)
+void topologicalSort(int vertex_count,std::vector<std::vector <int>> graph_no_weight)
 {
-    std::vector<std::vector <int>> gh(vertex_count);
-
-    //Отсеивваем веса для удобной работы с графом
-    for (int i = 0; i < edge_count; i++)
-    {
-        for (Pair v: graph.adjList[i])
-        {
-            int from, to;
-            from=i-1;
-            to=v.first-1;
-
-            gh[from].push_back(to);
-        }
-    }
-
     std::vector<int> visited(vertex_count, 0);
     std::vector<int> order;
     for (int i = 0; i < vertex_count; i++)
-    {
-        if (!visited[i]) {
-            dfs(gh, i, visited, order);
+        if (!visited[i])
+            dfs(graph_no_weight, i, visited, order);
 
-        }
-    }
     reverse(order.begin(), order.end());
 
     for (int i:order)
@@ -683,24 +718,184 @@ void topologicalSort(int vertex_count,int edge_count,Graph const &graph)
 
 }
 
+std::vector<int> topological_sorting(std::vector<std::vector<int>> &graph) {
+    std::vector <int> indegree(graph.size(), 0);
+    std::queue<int> q;
+    std::vector<int> solution;
+
+    for(int i = 0; i < graph.size(); i++)
+        for(int j = 0; j < graph[i].size(); j++)
+            indegree[ graph[i][j] ]++;
+
+
+    //enqueue all nodes with indegree 0
+    for(int i = 0; i < graph.size(); i++)
+        if(indegree[i] == 0)
+            q.push(i);
+
+
+    //remove one node after the other
+    while(q.size() > 0) {
+        int currentNode = q.front();
+        q.pop();
+        solution.push_back(currentNode);
+
+        for(int j = 0; j < graph[currentNode].size(); j++)
+        {
+            //remove all edges
+            int newNode = graph[currentNode][j];
+            indegree[newNode]--;
+            if(indegree[newNode] == 0)
+            {
+                //target node has now no more incoming edges
+                q.push(newNode);
+            }
+        }
+    }
+
+    return solution;
+}
+
+std::vector<std::vector <int>> GTS::make_graph_no_weight()
+{
+    int vertex_count = (int)id_used_vertexes.size();
+    std::vector<std::vector <int>> graph_no_weight(vertex_count);
+    for (int i : id_used_vertexes)
+        for (auto [id_pipe, path_] : graph)
+            graph_no_weight[path_.id_in-1].push_back(path_.id_out-1);
+
+    return graph_no_weight;
+}
+
 
 void GTS::Graph_and_Topsort()
 {
-    //int n = 8;
-    int edge_count = id_used_edges.size();
-    int n=id_used_vertexes.size();
 
-    // построить граф
-    Graph graph(paths, n);
+    int edge_count = (int)id_used_edges.size();
+    int vertex_count = (int)id_used_vertexes.size();
 
-    printGraph(graph, n);
+    printGraph(graph, vertex_count);
+
+    std::vector<std::vector <int>> graph_no_weight=make_graph_no_weight();
 
     // Топологическая сортировка
-    //topsort(graph, n);
-    topologicalSort(n, edge_count, graph);
+
+    std::vector<int> visited(vertex_count);
+    for (int v = 0; v < vertex_count; v++)
+    {
+        if (Has_cycle(vertex_count, edge_count, graph_no_weight, v, visited))
+        {
+            std::cout << "Graph has cycle!!!\n";
+            break;
+        }
+        else
+        {
+            std::cout << "Topsort:\n";
+            topologicalSort(vertex_count, graph_no_weight);
+            break;
+        }
+    }
+
+    //std::cout<<"\n\nTopsort2:\n";
+    //std::vector<int> res = topological_sorting(graph_no_weight);
+    //for(int i : res)
+    //    std::cout<<i+1<<" ";
 
 }
 
+
+
+
+const int INF = 1 << 30;
+
+void GTS::MaxFlow() // ( Edmonds-Karp algorithm )
+{
+
+    int edge_count = (int)id_used_edges.size();
+    int vertex_count = (int)id_used_vertexes.size();
+
+    int n, m;
+    //std::cin >> n >> m;
+
+    n = vertex_count;
+    m = edge_count;
+    std::vector<std::vector<int> > c (n, std::vector<int>(n)), f (n, std::vector<int>(n)), g(n);
+    int from, to, cost;
+
+
+    for (auto [id_pipe, path_] : graph)
+    {
+        from = path_.id_in;
+        to = path_.id_out;
+        cost = path_.weight;
+
+        to--, from--;
+        g[from].push_back(to);
+        c[from][to] = cost;
+    }
+
+
+    // s - исток, t - сток
+    int s = 0, t = n - 1;
+    std::cout<<"Input source and target\n";
+    s=InputNum<int>(0, n)-1;
+    t=InputNum<int>(0, n)-1;
+
+    bool found;
+    while (true)
+    {
+        std::vector<int> pth(n, -1);
+        std::queue<int> q;
+        // помещаем s в очередь
+        q.push(s);
+        pth[s] = s;
+        found = false;
+        while (!q.empty() && !found) {
+            from = q.front(); q.pop();
+            for (size_t j = 0; j < g[from].size() && !found; j++) {
+                to = g[from][j];
+                if (pth[to] == -1 && c[from][to] - f[from][to] > 0) {
+                    q.push(to);
+                    pth[to] = from;
+                    found = to == t;
+                }
+            }
+        }
+        // если увеличивающий путь из s в t не найден
+        if (!found) {
+            break;
+        }
+        // ищем минимальную величину, на которую можно увеличить поток
+        int cf = INF;
+        for (to = n - 1; to != s; ) {
+            from = pth[to];
+            cf = std::min (cf, c[from][to] - f[from][to]);
+            to = from;
+        }
+        // увеличиваем поток на эту величину, уменьшая при этом поток для обратныъ ребер
+        for (to = n - 1; to != s; ) {
+            from = pth[to];
+            f[from][to] += cf;
+            f[to][from] -= cf;
+            to = from;
+        }
+    }
+    int flow = 0;
+    for (size_t j = 0; j < g[s].size(); ++j) {
+        flow += f[s][g[s][j]];
+    }
+    std::cout <<"Max flow  from " << s+1 << " to " << t+1 << " = "<< flow <<std::endl;
+
+
+}
+
+
+
+
+void GTS::min_path() {
+
+
+}
 
 
 
