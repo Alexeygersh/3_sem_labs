@@ -1,6 +1,6 @@
 #include "utils.h"
 #include "pipe.h"
-#include "station.h"
+//#include "station.h"
 #include "GTS.h"
 
 void menu()
@@ -86,6 +86,7 @@ int main()
             case (11):
             {
                 gts.min_path();
+                break;
             }
             case (0):
             {

@@ -1,10 +1,11 @@
+//#define INF 100000000000
 #include "GTS.h"
 #include "pipe.h"
 #include "station.h"
 #include "utils.h"
 #include <sstream>
 #include <stack>
-#include <iterator>
+//#include <iterator>
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <queue>
@@ -490,7 +491,7 @@ void GTS::findKSs()
 void GTS::link()
 {
     path path={};
-    path.weight=1;
+
     int id_pipe=0;
 
     std::cout << "Input id first station\n" << "__> ";
@@ -517,6 +518,7 @@ void GTS::link()
 
         id_used_edges.insert(id);
         id_pipe = id;
+        path.weight=weight(ps.at(id_pipe));
 
         //path.id_link = *(found_ids.begin());
 
@@ -533,6 +535,7 @@ void GTS::link()
             {
                 id_used_edges.insert(el);
                 id_pipe = el;
+                path.weight=weight(ps.at(id_pipe));
                 break;
             }
         }
@@ -549,6 +552,7 @@ void GTS::link()
 
             id_used_edges.insert(id);
             id_pipe = id;
+            path.weight=weight(ps.at(id_pipe));
         }
     }
 
@@ -671,7 +675,7 @@ void GTS::fileIn()
 
 
 
-void printGraph(std::unordered_map<int,path> &graph, int n)
+void printGraph(std::unordered_map<int,path> &graph)
 {
     std::cout << "\nYour graph:\n";
     for (auto [id_pipe, path_] : graph)
@@ -718,43 +722,6 @@ void topologicalSort(int vertex_count,std::vector<std::vector <int>> graph_no_we
 
 }
 
-std::vector<int> topological_sorting(std::vector<std::vector<int>> &graph) {
-    std::vector <int> indegree(graph.size(), 0);
-    std::queue<int> q;
-    std::vector<int> solution;
-
-    for(int i = 0; i < graph.size(); i++)
-        for(int j = 0; j < graph[i].size(); j++)
-            indegree[ graph[i][j] ]++;
-
-
-    //enqueue all nodes with indegree 0
-    for(int i = 0; i < graph.size(); i++)
-        if(indegree[i] == 0)
-            q.push(i);
-
-
-    //remove one node after the other
-    while(q.size() > 0) {
-        int currentNode = q.front();
-        q.pop();
-        solution.push_back(currentNode);
-
-        for(int j = 0; j < graph[currentNode].size(); j++)
-        {
-            //remove all edges
-            int newNode = graph[currentNode][j];
-            indegree[newNode]--;
-            if(indegree[newNode] == 0)
-            {
-                //target node has now no more incoming edges
-                q.push(newNode);
-            }
-        }
-    }
-
-    return solution;
-}
 
 std::vector<std::vector <int>> GTS::make_graph_no_weight()
 {
@@ -774,14 +741,14 @@ void GTS::Graph_and_Topsort()
     int edge_count = (int)id_used_edges.size();
     int vertex_count = (int)id_used_vertexes.size();
 
-    printGraph(graph, vertex_count);
+    printGraph(graph);
 
     std::vector<std::vector <int>> graph_no_weight=make_graph_no_weight();
 
     // Топологическая сортировка
 
     std::vector<int> visited(vertex_count);
-    for (int v = 0; v < vertex_count; v++)
+    for (int v = 0; vertex_count > v; v++)
     {
         if (Has_cycle(vertex_count, edge_count, graph_no_weight, v, visited))
         {
@@ -803,99 +770,191 @@ void GTS::Graph_and_Topsort()
 
 }
 
-
-
-
 const int INF = 1 << 30;
+
+double GTS::weight(const pipe &p) //weight(ps.at(id))
+{
+    if (p.get_remont())
+    {
+        return INF;
+    }
+    else
+    {
+
+        //int diam=p.get_d();
+        double len=p.get_len();
+
+        return len;//sqrt((pow(diam,5)/len));   ---сейчапс вес из файла 1.txt как id трубы
+                                                // для понимания правильности алгоритма
+    }
+}
+
+double GTS::efficiency(const pipe &p) //weight(ps.at(id))
+{
+    if (p.get_remont())
+    {
+        return 0;
+    }
+    else
+    {
+        int diam=p.get_d();
+        double len=p.get_len();
+
+        return sqrt((pow(diam,5)/len));
+    }
+}
+
 
 void GTS::MaxFlow() // ( Edmonds-Karp algorithm )
 {
+    int edge_count = (int)id_used_edges.size();
+    int vertex_count = (int)id_used_vertexes.size();
+    std::vector<std::vector <int>> graph_no_weight=make_graph_no_weight();
+    std::vector<int> visited(vertex_count);
+
+
+    if (Has_cycle(vertex_count, edge_count, graph_no_weight, 0, visited))
+    {
+        std::cout << "Graph has cycle!!!\n";
+        return;
+    }
+    else
+    {
+        int n;
+
+        n = vertex_count;
+        //m = edge_count;
+        std::vector<std::vector<int>> c(vertex_count, std::vector<int>(n)) , f(n, std::vector<int>(n)) , g(n);
+        int from, to, cost;
+
+
+        for (auto [id_pipe, path_]: graph) {
+            from = path_.id_in;
+            to = path_.id_out;
+            cost = (int)efficiency(ps.at(id_pipe));//(int)path_.weight;
+
+            to--, from--;
+            g[from].push_back(to);
+            c[from][to] = cost;
+        }
+
+
+        // s - исток, t - сток
+
+        std::cout << "Input source and target\n";
+        int s = InputNum<int>(0, n) - 1;
+        int t = InputNum<int>(0, n) - 1;
+
+        bool found;
+        while (true) {
+            std::vector<int> pth(n, -1);
+            std::queue<int> q;
+            // помещаем s в очередь
+            q.push(s);
+            pth[s] = s;
+            found = false;
+            while (!q.empty() && !found) {
+                from = q.front();
+                q.pop();
+                for (size_t j = 0; j < g[from].size() && !found; j++) {
+                    to = g[from][j];
+                    if (pth[to] == -1 && c[from][to] - f[from][to] > 0) {
+                        q.push(to);
+                        pth[to] = from;
+                        found = to == t;
+                    }
+                }
+            }
+            // если увеличивающий путь из s в t не найден
+            if (!found) {
+                break;
+            }
+            // ищем минимальную величину, на которую можно увеличить поток
+            int cf = INF;
+            for (to = n - 1; to != s;) {
+                from = pth[to];
+                cf = std::min(cf, c[from][to] - f[from][to]);
+                to = from;
+            }
+            // увеличиваем поток на эту величину, уменьшая при этом поток для обратныъ ребер
+            for (to = n - 1; to != s;) {
+                from = pth[to];
+                f[from][to] += cf;
+                f[to][from] -= cf;
+                to = from;
+            }
+        }
+        int flow = 0;
+        for (size_t j = 0; j < g[s].size(); ++j) {
+            flow += f[s][g[s][j]];
+        }
+        std::cout << "Max flow  from " << s + 1 << " to " << t + 1 << " = " << flow << std::endl;
+
+    }
+}
+
+typedef std::pair<int, int> pair; //первое число пары — куда оно ведёт, второе — длина ребра
+
+std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair > > &adj) {
+
+    std::vector<int> d (n, INF),  p (n);
+    d[s] = 0;
+    std::vector<char> u (n);
+    for (int i=0; i<n; ++i) {
+        int v = -1;
+        for (int j=0; j<n; ++j)
+            if (!u[j] && (v == -1 || d[j] < d[v]))
+                v = j;
+        if (d[v] == INF)
+            break;
+        u[v] = true;
+
+        for (size_t j=0; j<adj[v].size(); ++j) {
+            int to = adj[v][j].first,
+                    len = adj[v][j].second;
+            if (d[v] + len < d[to]) {
+                d[to] = d[v] + len;
+                p[to] = v;
+            }
+        }
+    }
+
+
+    std::vector<int> path;
+    int k=0;
+    for (int v=t; v!=s; v=p[v]) {
+        path.push_back(v);
+        k++;
+        if (k>10000) //тут приблизительно макс кол-во станций
+            return {-INF};
+    }
+    path.push_back (s);
+    reverse (path.begin(), path.end());
+
+    return path;
+}
+
+void GTS::min_path() {
 
     int edge_count = (int)id_used_edges.size();
     int vertex_count = (int)id_used_vertexes.size();
 
-    int n, m;
-    //std::cin >> n >> m;
-
-    n = vertex_count;
-    m = edge_count;
-    std::vector<std::vector<int> > c (n, std::vector<int>(n)), f (n, std::vector<int>(n)), g(n);
-    int from, to, cost;
-
-
-    for (auto [id_pipe, path_] : graph)
-    {
-        from = path_.id_in;
-        to = path_.id_out;
-        cost = path_.weight;
-
-        to--, from--;
-        g[from].push_back(to);
-        c[from][to] = cost;
+    std::vector < std::vector < pair > > gr (vertex_count);
+    for (auto [id_pipe, path_] : graph) {
+        gr[path_.id_in-1].emplace_back(path_.id_out-1, path_.weight);
     }
 
+    std::cout << "Input source and target\n";
+    int s = InputNum<int>(0, vertex_count) - 1;
+    int t = InputNum<int>(0, vertex_count) - 1;
 
-    // s - исток, t - сток
-    int s = 0, t = n - 1;
-    std::cout<<"Input source and target\n";
-    s=InputNum<int>(0, n)-1;
-    t=InputNum<int>(0, n)-1;
+    std::vector min_pth = dijkstra(s,t, vertex_count, gr);
 
-    bool found;
-    while (true)
-    {
-        std::vector<int> pth(n, -1);
-        std::queue<int> q;
-        // помещаем s в очередь
-        q.push(s);
-        pth[s] = s;
-        found = false;
-        while (!q.empty() && !found) {
-            from = q.front(); q.pop();
-            for (size_t j = 0; j < g[from].size() && !found; j++) {
-                to = g[from][j];
-                if (pth[to] == -1 && c[from][to] - f[from][to] > 0) {
-                    q.push(to);
-                    pth[to] = from;
-                    found = to == t;
-                }
-            }
-        }
-        // если увеличивающий путь из s в t не найден
-        if (!found) {
-            break;
-        }
-        // ищем минимальную величину, на которую можно увеличить поток
-        int cf = INF;
-        for (to = n - 1; to != s; ) {
-            from = pth[to];
-            cf = std::min (cf, c[from][to] - f[from][to]);
-            to = from;
-        }
-        // увеличиваем поток на эту величину, уменьшая при этом поток для обратныъ ребер
-        for (to = n - 1; to != s; ) {
-            from = pth[to];
-            f[from][to] += cf;
-            f[to][from] -= cf;
-            to = from;
-        }
-    }
-    int flow = 0;
-    for (size_t j = 0; j < g[s].size(); ++j) {
-        flow += f[s][g[s][j]];
-    }
-    std::cout <<"Max flow  from " << s+1 << " to " << t+1 << " = "<< flow <<std::endl;
-
+    std::cout<<"Min path from "<<s+1<<" to "<<t+1<<" = ";
+    for (auto i: min_pth)
+        std::cout<<i+1<<" ";
+    std::cout<<std::endl;
 
 }
-
-
-
-
-void GTS::min_path() {
-
-
-}
-
 
 

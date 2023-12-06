@@ -8,7 +8,7 @@ struct path
 {
     int id_in;
     int id_out;
-    int weight;
+    double weight;
 
     friend std::ofstream &operator<<(std::ofstream &outf, const path &path);
     friend std::ifstream &operator>>(std::ifstream &fin, path &path);
@@ -24,6 +24,8 @@ private:
 	std::unordered_set<int> id_used_edges;
     std::unordered_set<int> id_used_vertexes;
     std::unordered_map<int,path> graph;
+
+
 
 public:
 	void addPipe();
@@ -41,10 +43,14 @@ public:
 	void Graph_and_Topsort();
 
     void MaxFlow();
-    void min_path();
+    //std::vector<long long> dijkstra(int s);
     std::vector<std::vector <int>> make_graph_no_weight();
-
+    void min_path();
 
     void del_or_edit_ps(std::unordered_set <int> &found_ids);
     void del_or_edit_ss(std::unordered_set <int> &found_ids);
+    static double weight(const pipe &p);
+    static double efficiency(const pipe &p);
+
+
 };
