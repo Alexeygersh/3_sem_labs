@@ -24,13 +24,12 @@ private:
 public:
     station() : ID(newID++) {}
 
-    int get_ID() const { return ID; }
-    std::string get_name_s() const { return this->name_s; }
-    int get_cex() const { return this->cex; }
-    int get_workingcex() const { return this->workingcex; }
-    double get_k() const { return this->k; }
+    [[nodiscard]] int get_ID() const { return ID; }
+    [[nodiscard]] std::string get_name_s() const { return this->name_s; }
+    [[nodiscard]] int get_cex() const { return this->cex; }
+    [[nodiscard]] int get_workingcex() const { return this->workingcex; }
+    [[nodiscard]] double get_k() const { return this->k; }
 
-    station get_KS() { return *this; }
 
     void set_KS(std::string name_s_, int cex_, int workingcex_, double k_)
     {

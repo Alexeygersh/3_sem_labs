@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <cmath>
 
 class pipe
 {
@@ -24,16 +25,21 @@ private:
 public:
     pipe() : ID(newID++) {}
 
-    int get_ID() const { return ID; }
-    std::string get_name_p() const { return this->name_p; }
-    double get_len() const { return this->len; }
-    int get_d() const { return this->d; }
-    bool get_remont() const { return this->remont; }
+    [[nodiscard]] int get_ID() const { return ID; }
+    [[nodiscard]] std::string get_name_p() const { return this->name_p; }
+    [[nodiscard]] double get_len() const { return this->len; }
+    [[nodiscard]] int get_d() const { return this->d; }
+    [[nodiscard]] bool get_remont() const { return this->remont; }
 
-    pipe get_Pipe()
+    [[nodiscard]] double get_efficiency() const
     {
-        return *this;
+        return this->remont==0 ? sqrt((pow(this->d,5)/this->len)) : 0;
     }
+    [[nodiscard]] double get_weight() const
+    {
+        return this->remont==0 ? this->len : std::numeric_limits<int>::infinity();
+    }
+
 
     void set_Pipe(std::string name_p_, double len_, int d_, bool remont_)
     {

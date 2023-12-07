@@ -1,11 +1,9 @@
-//#define INF 100000000000
 #include "GTS.h"
 #include "pipe.h"
 #include "station.h"
 #include "utils.h"
 #include <sstream>
 #include <stack>
-//#include <iterator>
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <queue>
@@ -518,7 +516,7 @@ void GTS::link()
 
         id_used_edges.insert(id);
         id_pipe = id;
-        path.weight=weight(ps.at(id_pipe));
+        path.weight=ps.at(id_pipe).get_weight();
 
         //path.id_link = *(found_ids.begin());
 
@@ -535,7 +533,7 @@ void GTS::link()
             {
                 id_used_edges.insert(el);
                 id_pipe = el;
-                path.weight=weight(ps.at(id_pipe));
+                path.weight=ps.at(id_pipe).get_weight();
                 break;
             }
         }
@@ -552,7 +550,7 @@ void GTS::link()
 
             id_used_edges.insert(id);
             id_pipe = id;
-            path.weight=weight(ps.at(id_pipe));
+            path.weight=ps.at(id_pipe).get_weight();
         }
     }
 
@@ -770,39 +768,9 @@ void GTS::Graph_and_Topsort()
 
 }
 
-const int INF = 1 << 30;
+const int INF=std::numeric_limits<int>::infinity();
+//const int INF = 1 << 30;
 
-double GTS::weight(const pipe &p) //weight(ps.at(id))
-{
-    if (p.get_remont())
-    {
-        return INF;
-    }
-    else
-    {
-
-        //int diam=p.get_d();
-        double len=p.get_len();
-
-        return len;//sqrt((pow(diam,5)/len));   ---сейчапс вес из файла 1.txt как id трубы
-                                                // для понимания правильности алгоритма
-    }
-}
-
-double GTS::efficiency(const pipe &p) //weight(ps.at(id))
-{
-    if (p.get_remont())
-    {
-        return 0;
-    }
-    else
-    {
-        int diam=p.get_d();
-        double len=p.get_len();
-
-        return sqrt((pow(diam,5)/len));
-    }
-}
 
 
 void GTS::MaxFlow() // ( Edmonds-Karp algorithm )
@@ -831,7 +799,7 @@ void GTS::MaxFlow() // ( Edmonds-Karp algorithm )
         for (auto [id_pipe, path_]: graph) {
             from = path_.id_in;
             to = path_.id_out;
-            cost = (int)efficiency(ps.at(id_pipe));//(int)path_.weight;
+            cost = (int)ps.at(id_pipe).get_efficiency();
 
             to--, from--;
             g[from].push_back(to);
@@ -897,7 +865,7 @@ typedef std::pair<int, int> pair; //первое число пары — куд�
 
 std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair > > &adj) {
 
-    std::vector<int> d (n, INF),  p (n);
+    std::vector<int> d(n, INF),  p(n);
     d[s] = 0;
     std::vector<char> u (n);
     for (int i=0; i<n; ++i) {
@@ -919,14 +887,13 @@ std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair 
         }
     }
 
-
     std::vector<int> path;
     int k=0;
     for (int v=t; v!=s; v=p[v]) {
         path.push_back(v);
         k++;
-        if (k>10000) //тут приблизительно макс кол-во станций
-            return {-INF};
+        if (k>10000)
+            return {};
     }
     path.push_back (s);
     reverse (path.begin(), path.end());
@@ -936,25 +903,27 @@ std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair 
 
 void GTS::min_path() {
 
-    int edge_count = (int)id_used_edges.size();
     int vertex_count = (int)id_used_vertexes.size();
 
     std::vector < std::vector < pair > > gr (vertex_count);
-    for (auto [id_pipe, path_] : graph) {
+    for (auto [id_pipe, path_] : graph)
         gr[path_.id_in-1].emplace_back(path_.id_out-1, path_.weight);
-    }
+
 
     std::cout << "Input source and target\n";
     int s = InputNum<int>(0, vertex_count) - 1;
     int t = InputNum<int>(0, vertex_count) - 1;
 
     std::vector min_pth = dijkstra(s,t, vertex_count, gr);
-
-    std::cout<<"Min path from "<<s+1<<" to "<<t+1<<" = ";
-    for (auto i: min_pth)
-        std::cout<<i+1<<" ";
-    std::cout<<std::endl;
-
+    if (min_pth.empty())
+        std::cout << "No way\n";
+    else
+    {
+        std::cout << "Min path from " << s + 1 << " to " << t + 1 << " = ";
+        for (auto i: min_pth)
+            std::cout << i + 1 << " ";
+        std::cout << std::endl;
+    }
 }
 
 
