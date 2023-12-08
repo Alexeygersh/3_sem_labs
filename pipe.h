@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <cmath>
 
+const int INF = 1 << 30;
 class pipe
 {
 private:
@@ -37,7 +38,7 @@ public:
     }
     [[nodiscard]] double get_weight() const
     {
-        return this->remont==0 ? this->len : std::numeric_limits<int>::infinity();
+        return this->remont==0 ? this->len : INF;//std::numeric_limits<int>::infinity();
     }
 
 

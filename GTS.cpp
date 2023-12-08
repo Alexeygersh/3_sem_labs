@@ -31,8 +31,6 @@ void GTS::out_data()
 }
 
 
-
-
 bool ID_is_Present(std::unordered_set<int> &unordered_set,int value)
 {
     int k=0;
@@ -46,10 +44,6 @@ bool ID_is_Present(std::unordered_set<int> &unordered_set,int value)
     else
         return true;
 }
-
-//================================================== find & del or edit ===============================================
-
-
 
 std::unordered_set<int> select_ids(std::unordered_set<int> &found_ids)
 {
@@ -100,10 +94,10 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
         std::cout << ps.at(id);
     }
     std::cout<<"\nids\n";
+
     for (int id : found_ids)
-    {
         std::cout << id<<", ";
-    }
+
     std::cout << "\n";
 
     //choise select ids or exit
@@ -114,8 +108,6 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
         << "3. del pipes\n"
         << "__> ";
     int choice2 = InputNum<int>(1, 3);
-    
-    //pipe& p = p;
 
     std::unordered_set<int> selected_ids;
 
@@ -133,9 +125,7 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
         bool rem=InputNum<bool>(false,true);
 
         for(int id : selected_ids)
-        {
             ps.at(id).set_remont(rem);
-        }
     }
     else
     {
@@ -147,9 +137,7 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
         for (int i : selected_ids)
         {
             if (id_used_edges.count(i))
-            {
                 used.insert(i);
-            }
         }
 
         //проверка на то что труба состоит в графе
@@ -170,7 +158,6 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
                 {
                     id_used_edges.erase(id_used_edges.find(id));
                     graph.erase(id);
-
                 }
 
                 std::cout<<"\n";
@@ -185,7 +172,6 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
             }
             else //не удалять
                 return;
-
         }
         else //не используется в графе=удалить просто
         {
@@ -198,14 +184,13 @@ void GTS::del_or_edit_ps(std::unordered_set <int> &found_ids)
 void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
 {
     for (int id : found_ids)
-    {
         std::cout << ss.at(id);
-    }
+
     std::cout<<"\nids\n";
+
     for (int id : found_ids)
-    {
         std::cout << id<<", ";
-    }
+
     std::cout << "\n";
 
     //choise select ids or exit
@@ -226,7 +211,6 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
     }
     else if (choice2 == 2)
     {
-        
         std::cout << "select ids station to edit\n";
         selected_ids=select_ids(found_ids);
         std::cout<< "\nInput working cex for stations\n"
@@ -234,9 +218,7 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
         int workcex=InputNum<int>(0,100000);
 
         for(int id : selected_ids)
-        {
             ss.at(id).set_workingcex(workcex);
-        }
     }
     else
     {
@@ -248,9 +230,7 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
         for (int i : selected_ids)
         {
             if (id_used_vertexes.count(i))
-            {
                 used.insert(i);
-            }
         }
 
         //проверка на то что станция состоит в графе
@@ -285,8 +265,6 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
                 for (auto i : arrKeys)
                     graph.erase(i);
 
-
-
                 //убираем станции без труб из id_used_vertexes
 
 //                std::vector<int> arrKeys2;
@@ -301,8 +279,6 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
 //                    if (!(std::find(arrKeys2.begin(), arrKeys2.end(), i) == arrKeys2.end()))
 //                            id_used_vertexes.erase(id_used_vertexes.find(i));
 
-
-
                 std::cout<<"\n";
                 for(auto i:id_used_edges)
                     std::cout<<i<<" ";
@@ -316,8 +292,6 @@ void GTS::del_or_edit_ss(std::unordered_set <int> &found_ids)
             }
             else //не удалять
                 return;
-
-
         }
         else //не используется в графе=удалить просто
         {
@@ -384,14 +358,11 @@ void GTS::findPipes()
         getline(std::cin, name);
         std::cerr << name;
         std::unordered_set<int> found_ids=find(ps, CheckByName, name);
+
         if (found_ids.empty())
-        {
             std::cout << "Not found \\_(._.)_/ \n";
-        }
         else
-        {
             del_or_edit_ps(found_ids);
-        }
     }
     else if (choice == 2)
     {
@@ -399,14 +370,11 @@ void GTS::findPipes()
         << "__> ";
         bool rem= InputNum<bool>(false, true);
         std::unordered_set<int> found_ids=find(ps, CheckByRemont, rem);
+
         if (found_ids.empty())
-        {
             std::cout << "Not found \\_(._.)_/ \n";
-        }
         else
-        {
             del_or_edit_ps(found_ids);
-        }
     }
 }
 
@@ -451,6 +419,7 @@ void GTS::findKSs()
          << "2. persent not working cex KS\n"
          << "__> ";
     int choice = InputNum<int>(1, 2);
+
     if (choice == 1)
     {
         std::cout << "Input name KS\n"
@@ -460,14 +429,11 @@ void GTS::findKSs()
         getline(std::cin, name);
         std::cerr << name;
         std::unordered_set <int> found_ids = find(ss, CheckByName2, name);
+
         if (found_ids.empty())
-        {
             std::cout << "Not found \\_(._.)_/ \n";
-        }
         else
-        {
             del_or_edit_ss(found_ids);
-        }
     }
     else if (choice == 2)
     {
@@ -475,21 +441,17 @@ void GTS::findKSs()
              << "__> ";
         int persent = InputNum<int>(0, 100);
         std::unordered_set <int> found_ids = find(ss, CheckByWCex, persent);
+
         if (found_ids.empty())
-        {
             std::cout << "Not found \\_(._.)_/ \n";
-        }
         else
-        {
             del_or_edit_ss(found_ids);
-        }
     }
 }
 
 void GTS::link()
 {
     path path={};
-
     int id_pipe=0;
 
     std::cout << "Input id first station\n" << "__> ";
@@ -500,8 +462,7 @@ void GTS::link()
     path.id_out=InputNum(1,station::get_newID());
     id_used_vertexes.insert(path.id_out);
 
-    std::cout << "Input diameter pipe\n" << "__> "; 
-
+    std::cout << "Input diameter pipe\n" << "__> ";
     int dia=InputNum(500,1400);//500 700 1000 1400
 
     std::unordered_set<int> found_ids=find(ps, CheckByD, dia);
@@ -519,7 +480,6 @@ void GTS::link()
         path.weight=ps.at(id_pipe).get_weight();
 
         //path.id_link = *(found_ids.begin());
-
     }
     else
     {
@@ -537,7 +497,6 @@ void GTS::link()
                 break;
             }
         }
-
 
         //Если найденная труба с данным диаметром есть, но используется
         if (id_pipe == 0)
@@ -562,9 +521,6 @@ void GTS::link()
 
 }
 
-
-//================================================== input/output file ===============================================
-
 std::ofstream &operator<<(std::ofstream &outf, const path &path)
 {
     outf << path.id_in << "\n"
@@ -577,7 +533,6 @@ std::ifstream &operator>>(std::ifstream &fin, path &path)
     fin >> path.id_in >> path.id_out >> path.weight;
     return fin;
 }
-
 
 void GTS::fileOut()
 {
@@ -599,25 +554,20 @@ void GTS::fileOut()
             // if (station::s.cex > 0)
             outf << s;
         }
-
         for (auto &[id, path] : graph)
         {
             outf<<"-\n";
             outf<<id<<"\n";
             outf << path;
         }
-
         for (auto el : id_used_edges)
             outf <<"e\n"<< el<<"\n";
 
         for (auto el : id_used_vertexes)
             outf <<"v\n"<< el<<"\n";
-
     }
     outf.close();
 }
-
-
 
 void GTS::fileIn()
 {
@@ -665,13 +615,10 @@ void GTS::fileIn()
                 fin >> id_vertex;
                 id_used_vertexes.insert(id_vertex);
             }
-
         }
     }
     fin.close();
 }
-
-
 
 void printGraph(std::unordered_map<int,path> &graph)
 {
@@ -680,8 +627,6 @@ void printGraph(std::unordered_map<int,path> &graph)
         std::cout <<"(id:"<<path_.id_in<<") ---(id:"<<id_pipe<<")---> (id:"<<path_.id_out<<")\n";
 
 }
-
-
 
 bool Has_cycle(int vertex_count,int edge_count, std::vector<std::vector <int>> graph_no_weight, int v, std::vector<int> &visited)
 {
@@ -720,7 +665,6 @@ void topologicalSort(int vertex_count,std::vector<std::vector <int>> graph_no_we
 
 }
 
-
 std::vector<std::vector <int>> GTS::make_graph_no_weight()
 {
     int vertex_count = (int)id_used_vertexes.size();
@@ -731,7 +675,6 @@ std::vector<std::vector <int>> GTS::make_graph_no_weight()
 
     return graph_no_weight;
 }
-
 
 void GTS::Graph_and_Topsort()
 {
@@ -760,18 +703,7 @@ void GTS::Graph_and_Topsort()
             break;
         }
     }
-
-    //std::cout<<"\n\nTopsort2:\n";
-    //std::vector<int> res = topological_sorting(graph_no_weight);
-    //for(int i : res)
-    //    std::cout<<i+1<<" ";
-
 }
-
-const int INF=std::numeric_limits<int>::infinity();
-//const int INF = 1 << 30;
-
-
 
 void GTS::MaxFlow() // ( Edmonds-Karp algorithm )
 {
