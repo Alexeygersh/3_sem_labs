@@ -42,13 +42,13 @@ public:
     }
 
 
-    void set_Pipe(std::string name_p_, double len_, int d_, bool remont_)
-    {
-        this->name_p = name_p_;
-        this->len = len_;
-        this->d = d_;
-        this->remont = remont_;
-    }
+//    void set_Pipe(std::string name_p_, double len_, int d_, bool remont_)
+//    {
+//        this->name_p = name_p_;
+//        this->len = len_;
+//        this->d = d_;
+//        this->remont = remont_;
+//    }
     void set_remont(bool remont_) { this->remont = remont_; }
     void set_ID(int ID_) { this->ID = ID_; }
     static int get_newID() { return newID; }

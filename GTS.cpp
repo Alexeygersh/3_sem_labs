@@ -799,6 +799,7 @@ std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair 
 
     std::vector<int> d(n, INF),  p(n);
     d[s] = 0;
+    int ves;
     std::vector<char> u (n);
     for (int i=0; i<n; ++i) {
         int v = -1;
@@ -816,6 +817,7 @@ std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair 
                 d[to] = d[v] + len;
                 p[to] = v;
             }
+            ves=d[v+1];/////
         }
     }
 
@@ -830,6 +832,7 @@ std::vector<int> dijkstra(int s, int t, int n, std::vector < std::vector < pair 
     path.push_back (s);
     reverse (path.begin(), path.end());
 
+    std::cout<<"path weigth:  "<<ves<<'\n';
     return path;
 }
 
@@ -837,9 +840,13 @@ void GTS::min_path() {
 
     int vertex_count = (int)id_used_vertexes.size();
 
+
+
     std::vector < std::vector < pair > > gr (vertex_count);
-    for (auto [id_pipe, path_] : graph)
-        gr[path_.id_in-1].emplace_back(path_.id_out-1, path_.weight);
+    for (auto [id_pipe, path_] : graph) {
+        int cost = (int)ps.at(id_pipe).get_weight();
+        gr[path_.id_in - 1].emplace_back(path_.id_out - 1, cost);
+    }
 
 
     std::cout << "Input source and target\n";

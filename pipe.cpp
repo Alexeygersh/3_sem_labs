@@ -15,17 +15,13 @@ std::ofstream &operator<<(std::ofstream &outf,const pipe &p)
 }
 std::ifstream &operator>>(std::ifstream &fin, pipe &p)
 {
-    std::string name;
     int id;
-    double len;
-    int d;
-    bool remont;
     fin >> id;
     fin >> std::ws;
-    getline(fin, name);
-    fin >> len >> d >> remont;
+    getline(fin, p.name_p);
+    fin >> p.len >> p.d >> p.remont;
     p.set_ID(id);
-    p.set_Pipe(name, len, d, remont);
+    //p.set_Pipe(name, len, d, remont);
 
     return fin;
 }
